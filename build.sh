@@ -30,6 +30,24 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </plist>
 PLIST
 
-# Assinatura ad-hoc: o macOS lembra da permissão de Acessibilidade por assinatura.
-codesign --force --sign - "$APP"
-echo "Pronto: $(pwd)/$APP"
+# O macOS guarda a permissão de Acessibilidade pela assinatura. Com o certificado local
+# "Gatinho Dev" ela fica igual a cada build; sem ele (CI, outra máquina), cai na ad hoc,
+# que muda a cada build e obriga a dar a permissão de novo.
+ID=$(security find-identity -p codesigning 2>/dev/null | awk '/"Gatinho Dev"/ {print $2; exit}')
+if [ -n "$ID" ]; then
+  codesign --force --sign "$ID" --identifier local.gatinho.desktopcat "$APP"
+else
+  echo "Aviso: sem o certificado \"Gatinho Dev\" (rode ./certificado-local.sh); usando assinatura ad hoc."
+  codesign --force --sign - "$APP"
+fi
+
+# ./build.sh --install: troca o app em /Applications e abre de novo.
+if [ "${1:-}" = "--install" ]; then
+  pkill -x Gatinho 2>/dev/null && sleep 0.5 || true
+  rm -rf "/Applications/$APP"
+  ditto "$APP" "/Applications/$APP"
+  open "/Applications/$APP"
+  echo "Instalado e aberto: /Applications/$APP"
+else
+  echo "Pronto: $(pwd)/$APP  (use ./build.sh --install para instalar em /Applications)"
+fi

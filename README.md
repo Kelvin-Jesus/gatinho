@@ -18,10 +18,11 @@ Gato de mesa para macOS, Linux e Windows, todo em Swift, com animações no esti
 ## Rodar no Mac
 
 ```bash
-./build.sh && open Gatinho.app
+./certificado-local.sh     # uma vez: certificado local para a assinatura não mudar
+./build.sh --install       # compila, instala em /Applications e abre
 ```
 
-Só precisa das Command Line Tools (sem Xcode). Na primeira vez, o macOS pede **Acessibilidade** para o gato ver o teclado. Ao recompilar, a assinatura muda e pode ser preciso remover e adicionar o Gatinho de novo em Ajustes > Privacidade e Segurança > Acessibilidade.
+Só precisa das Command Line Tools (sem Xcode). Na primeira vez, o macOS pede **Acessibilidade** para o gato ver o teclado. Com o certificado local a permissão continua valendo depois de recompilar. Sem ele, a assinatura muda a cada build e é preciso remover e adicionar o Gatinho de novo em Ajustes > Privacidade e Segurança > Acessibilidade.
 
 ## Rodar no Linux
 
