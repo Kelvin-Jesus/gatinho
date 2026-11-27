@@ -7,7 +7,7 @@ public final class OverlayMenu {
     public var hovered: Int?
 
     static let rowH: CGFloat = 25
-    static let width: CGFloat = 250
+    static let width: CGFloat = 300
 
     public init() {}
 
@@ -36,7 +36,7 @@ public final class OverlayMenu {
         for (i, title) in rows.enumerated() {
             let r = CGRect(x: f.minX + 6, y: f.minY + 6 + CGFloat(i) * Self.rowH, width: f.width - 12, height: Self.rowH)
             if i == hovered { g.fill(.roundedRect(r, 6), .color(CatRenderer.keyLit)) }
-            let size: CGFloat = 13
+            let size: CGFloat = 12
             let tw = StrokeFont.width(title, size: size)
             g.save()
             g.text(title, center: CGPoint(x: r.minX + 10 + tw / 2, y: r.midY), size: size, color: CatRenderer.ink)

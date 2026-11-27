@@ -81,8 +81,8 @@ public enum SelfTest {
             CatRenderer.draw(sim, painter, scale: 1)
             if withMenu && i == 0 {
                 let menu = OverlayMenu()
-                menu.rows = ["Pelagem: Tuxedo", "Tamanho: Normal", "Opacidade: 100%", "[x] Mostrar teclas",
-                             "[ ] Travar (Ctrl+Alt+L)", "Sair"]
+                menu.rows = ["Pelagem: Calico (três cores)", "Tamanho: Normal", "Opacidade: 100%", "[x] Mostrar teclas",
+                             "Travar no lugar (Ctrl+Alt+L)", "Fechar menu", "Sair do Gatinho"]
                 menu.isOpen = true
                 menu.hovered = 1
                 menu.draw(painter, scale: 1)
