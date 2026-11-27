@@ -6,6 +6,8 @@ public struct Settings: Codable {
     public var scale = 1.0
     public var opacity = 1.0
     public var showKeys = true
+    /// Opcional para continuar lendo o settings.json de versões antigas.
+    public var purrSound: Bool?
     public var x: Int?
     public var y: Int?
 

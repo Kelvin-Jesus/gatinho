@@ -47,6 +47,7 @@ final class LinuxCat {
     private let screen: Int32
     private let root: Window
     private let cat: DesktopCat
+    private let purr = LinuxPurr()
 
     private var win: Window = 0
     private var visual: UnsafeMutablePointer<Visual>!
@@ -86,6 +87,10 @@ final class LinuxCat {
         atomCM = atom("_NET_WM_CM_S\(screen)")
         createWindow()
         setupGlobalInput()
+        cat.sim.onPurrChange = { [weak self] on in
+            guard let self else { return }
+            purr.set(on && cat.purrSound)
+        }
     }
 
     private static var settingsURL: URL {
@@ -393,6 +398,7 @@ final class LinuxCat {
         if cat.menu.isOpen {
             guard b.button == 1 || b.button == 3 else { return }
             if let row = cat.menu.row(at: p) {
+                defer { purr.set(cat.sim.purring && cat.purrSound) }
                 switch cat.activateMenuRow(row, backward: b.button == 3) {
                 case .resized: applyResize()
                 case .lockChanged: lockChanged()

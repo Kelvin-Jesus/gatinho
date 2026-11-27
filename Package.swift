@@ -24,6 +24,7 @@ let package = Package(
                 .linkedLibrary("User32", .when(platforms: [.windows])),
                 .linkedLibrary("Gdi32", .when(platforms: [.windows])),
                 .linkedLibrary("Shell32", .when(platforms: [.windows])),
+                .linkedLibrary("Winmm", .when(platforms: [.windows])), // PlaySound (ronronar)
                 // App de janela (sem console preto); a entrada continua sendo o main do Swift.
                 .unsafeFlags(["-Xlinker", "/SUBSYSTEM:WINDOWS", "-Xlinker", "/ENTRY:mainCRTStartup"],
                              .when(platforms: [.windows])),

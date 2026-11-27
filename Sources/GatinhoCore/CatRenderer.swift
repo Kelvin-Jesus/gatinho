@@ -54,7 +54,9 @@ public enum CatRenderer {
 
         // Cabeça
         g.save()
-        g.translate(0, sim.headLift.value - rise * 1.1)
+        // Ronronar: a cabeça vibra de leve, fino demais pra parecer tremedeira.
+        let purrShake = CGFloat(sin(sim.purrPhase)) * 0.45 * sim.purr.value
+        g.translate(purrShake * 0.4, sim.headLift.value - rise * 1.1 + purrShake)
         g.translate(Geo.neck.x, Geo.neck.y)
         g.rotate(sim.headTilt.value + sim.shakeAngle)
         g.translate(-Geo.neck.x, -Geo.neck.y)

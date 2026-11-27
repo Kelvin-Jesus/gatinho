@@ -83,6 +83,13 @@ public final class DesktopCat {
         save()
     }
 
+    public var purrSound: Bool { settings.purrSound ?? true }
+
+    public func togglePurrSound() {
+        settings.purrSound = !purrSound
+        save()
+    }
+
     public func setPosition(x: Int, y: Int) {
         settings.x = x
         settings.y = y
@@ -108,6 +115,7 @@ public final class DesktopCat {
             "Tamanho: \(sizeName)",
             "Opacidade: \(Int((settings.opacity * 100).rounded()))%",
             "[\(sim.showKeyLabels ? "x" : " ")] Mostrar teclas",
+            "[\(purrSound ? "x" : " ")] Ronronar com som",
             "Travar no lugar (Ctrl+Alt+L)",
             "Fechar menu",
             "Sair do Gatinho",
@@ -148,12 +156,14 @@ public final class DesktopCat {
         case 3:
             toggleKeys()
         case 4:
+            togglePurrSound()
+        case 5:
             closeMenu()
             locked.toggle()
             return .lockChanged
-        case 5:
-            closeMenu()
         case 6:
+            closeMenu()
+        case 7:
             return .quit
         default:
             break

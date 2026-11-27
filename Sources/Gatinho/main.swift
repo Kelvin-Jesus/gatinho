@@ -16,6 +16,10 @@ if args.contains("--check-smooth") {
 if let i = args.firstIndex(of: "--record"), i + 2 < args.count {
     exit(Recorder.record(args[i + 1], to: args[i + 2]) ? 0 : 1)
 }
+if let i = args.firstIndex(of: "--purr"), i + 1 < args.count {
+    // Grava o som do ronronar (6 s) num .wav, para ouvir sem abrir o gato.
+    exit((try? Purr.wav(seconds: 6).write(to: URL(fileURLWithPath: args[i + 1]))) != nil ? 0 : 1)
+}
 if args.contains("--benchmark") {
     SelfTest.benchmark(scale: 1)
     SelfTest.benchmark(scale: 2)

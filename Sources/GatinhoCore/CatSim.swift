@@ -67,6 +67,11 @@ public final class CatSim {
     private(set) var wheelPhase: CGFloat = 0
     public private(set) var petting = false
     private var petPoint: CGPoint = .zero
+    private var petStart: TimeInterval = 0
+    /// Ronronando: começa depois de um instante de carinho e para quando a mão sai.
+    public private(set) var purring = false
+    /// Chamado quando o ronronar começa ou para (cada sistema liga o som aqui).
+    public var onPurrChange: ((Bool) -> Void)?
 
     // Animação
     private(set) var leftPaw = Spring2(value: Geo.restL)
@@ -80,6 +85,7 @@ public final class CatSim {
     private(set) var sleep = Spring1(value: 0)
     private(set) var dream = Spring1(value: 0)
     private(set) var pet = Spring1(value: 0)
+    private(set) var purr = Spring1(value: 0)
     private(set) var mouseJiggle = Spring2(value: .zero)
     private var jiggleTarget = CGPoint.zero
 
@@ -103,6 +109,8 @@ public final class CatSim {
     /// velocidade faz a fase saltar e a animação "enlouquece".
     public private(set) var tailPhase: Double = 0
     public private(set) var breathPhase: Double = 0
+    /// Fase da vibração do ronronar (~24 vibrações por segundo).
+    public private(set) var purrPhase: Double = 0
 
     public init(coat: Coat) {
         self.coat = coat
@@ -174,7 +182,10 @@ public final class CatSim {
         markActivity(t)
     }
 
-    public func beginPet(at p: CGPoint) { petting = true; petPoint = p; markActivity(now) }
+    public func beginPet(at p: CGPoint) {
+        if !petting { petStart = now }
+        petting = true; petPoint = p; markActivity(now)
+    }
     public func movePet(to p: CGPoint) { petPoint = p; markActivity(now) }
     public func endPet() { petting = false }
 
@@ -213,6 +224,12 @@ public final class CatSim {
         let sleepT: CGFloat = mood == .sleeping ? 1 : 0
         let dreamT: CGFloat = mood == .daydream ? 1 : 0
         let petT: CGFloat = petting ? 1 : 0
+        let shouldPurr = petting && t - petStart > 0.35
+        if shouldPurr != purring {
+            purring = shouldPurr
+            onPurrChange?(purring)
+        }
+        let purrT: CGFloat = purring ? 1 : 0
 
         let n = max(1, Int((dt / (1.0 / 240)).rounded(.up)))
         let h = dt / CGFloat(n)
@@ -228,11 +245,13 @@ public final class CatSim {
             sleep.step(to: sleepT, dt: h, k: sleepT > sleep.value ? 2.5 : 90)
             dream.step(to: dreamT, dt: h, k: 6)
             pet.step(to: petT, dt: h, k: 140)
+            purr.step(to: purrT, dt: h, k: purring ? 20 : 60)
             mouseJiggle.step(to: jiggleTarget, dt: h, k: 500, zeta: 0.6)
         }
 
         tailPhase = (tailPhase + Double(dt) * tailSpeed).truncatingRemainder(dividingBy: 2 * .pi)
         breathPhase = (breathPhase + Double(dt) * 2 * .pi / breathPeriod).truncatingRemainder(dividingBy: 2 * .pi)
+        purrPhase = (purrPhase + Double(dt) * 2 * .pi * 24).truncatingRemainder(dividingBy: 2 * .pi)
 
         updateBlinkAndTwitch(t)
         updateParticles(t)

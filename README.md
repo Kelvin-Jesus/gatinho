@@ -15,7 +15,7 @@ Fiz porque vi o gatinho do [LittleOne](https://xiaozhilittleone.com/) e quis um 
   <img src="docs/soneca.gif" width="300" alt="Gato cinza ficando com sono e dormindo, com Zs subindo">
 </p>
 
-Dá pra fazer carinho: clica e segura na cabeça dele. Ele fecha os olhos, baixa as orelhas e solta uns coraçõezinhos.
+Dá pra fazer carinho: clica e segura na cabeça dele. Ele fecha os olhos, baixa as orelhas, solta uns coraçõezinhos e começa a ronronar. O som dá pra desligar no menu.
 
 ## Os gatos
 
@@ -68,7 +68,7 @@ Ele aparece na bandeja, perto do relógio.
 ## Convivendo com ele
 
 - Arrasta pelo corpo pra mudar ele de lugar.
-- Clique direito abre o menu: pelagem, tamanho, transparência, mostrar ou esconder as letrinhas, travar no lugar. No Mac o mesmo menu fica no ícone da barra de menus, e no Windows no ícone da bandeja.
+- Clique direito abre o menu: pelagem, tamanho, transparência, mostrar ou esconder as letrinhas, ronronar com ou sem som, travar no lugar. No Mac o mesmo menu fica no ícone da barra de menus, e no Windows no ícone da bandeja.
 - No Linux o menu aparece dentro da própria janela. Clique esquerdo avança a opção, direito volta, `Esc` fecha.
 - `⌃⌥L` no Mac ou `Ctrl+Alt+L` no resto trava o gato. Travado, os cliques passam através dele, então ele não atrapalha nada.
 
@@ -88,13 +88,14 @@ O gato precisa ver suas teclas pra digitar junto, então vale dizer o que ele fa
 | Linux | X11, transparente ou recortada com XShape | XInput2, ou `/dev/input` no Wayland |
 | Windows | `UpdateLayeredWindow` | ganchos `WH_KEYBOARD_LL` e `WH_MOUSE_LL` |
 
-No Linux e no Windows o desenho é feito por um rasterizador próprio, sem biblioteca gráfica nenhuma. Um quadro leva uns 2 ms.
+No Linux e no Windows o desenho é feito por um rasterizador próprio, sem biblioteca gráfica nenhuma. Um quadro leva uns 2 ms. O ronronar também é gerado no código, sem arquivo de áudio: batidas de ruído grave a uns 25 por segundo, mais fortes quando ele solta o ar. No Mac toca pelo AVFoundation, no Windows pelo `PlaySound` e no Linux pelo `pw-play`, `paplay` ou `aplay`, o que tiver.
 
 Alguns comandos ajudam a conferir as coisas sem abrir janela:
 
 ```bash
 Gatinho --snapshot estados.png     # a grade de pelagens aí de cima
 Gatinho --record digitando x.rgba  # quadros crus de uma cena (digitando, carinho, soneca)
+Gatinho --purr ronronar.wav        # grava 6 s do ronronar
 Gatinho --check-smooth             # falha se o rabo ou a respiração derem pulo
 Gatinho --benchmark                # quanto tempo leva um quadro
 ```

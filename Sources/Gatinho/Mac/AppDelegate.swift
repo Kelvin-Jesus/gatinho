@@ -29,12 +29,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let defaults = UserDefaults.standard
     private var locked = false
     private var scale: CGFloat = 1
+    private let purr = PurrPlayer()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         sim = CatSim(coat: Coat.find(defaults.string(forKey: "coat")))
         scale = defaults.object(forKey: "scale") == nil ? 1 : CGFloat(defaults.double(forKey: "scale"))
         sim.screenScale = scale
         sim.showKeyLabels = defaults.object(forKey: "showKeys") as? Bool ?? true
+        purr.enabled = defaults.object(forKey: "purrSound") as? Bool ?? true
+        sim.onPurrChange = { [weak self] on in self?.purr.set(on) }
 
         makePanel()
         makeStatusItem()
@@ -166,6 +169,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             guard let self else { return }
             sim.showKeyLabels.toggle()
             defaults.set(sim.showKeyLabels, forKey: "showKeys")
+        })
+        m.addItem(ActionItem("Ronronar com som", checked: purr.enabled) { [weak self] in
+            guard let self else { return }
+            purr.enabled.toggle()
+            defaults.set(purr.enabled, forKey: "purrSound")
         })
         m.addItem(ActionItem("Travar no lugar (cliques atravessam)  ⌃⌥L", checked: locked) { [weak self] in
             self?.toggleLock()

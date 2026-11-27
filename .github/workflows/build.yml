@@ -97,3 +97,26 @@ jobs:
             Gatinho-windows.zip
             estados-windows.png
             tela-windows.png
+
+  # Tag v* (ex.: v0.1.0) publica um Release com os executáveis dos 3 sistemas.
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [macos, linux, windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: art
+      - name: Publicar Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir dist
+          cp art/gatinho-macos/Gatinho-macos.zip dist/
+          cp art/gatinho-windows/Gatinho-windows.zip dist/
+          cp art/gatinho-linux/gatinho-linux-x86_64 dist/Gatinho-linux-x86_64
+          chmod +x dist/Gatinho-linux-x86_64
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" --title "Gatinho $GITHUB_REF_NAME" --generate-notes

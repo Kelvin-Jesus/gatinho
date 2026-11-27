@@ -60,7 +60,7 @@ private enum W32 {
 /// Ids dos itens do menu.
 private enum Cmd {
     static let coat = 100, size = 200, opacity = 300
-    static let keys = 400, lock = 401, quit = 402
+    static let keys = 400, lock = 401, quit = 402, purr = 403
 }
 
 /// O gato no Windows: janela em camadas desenhada pelo SoftPainter.
@@ -70,6 +70,7 @@ final class WinCat {
     static var shared: WinCat!
 
     let cat: DesktopCat
+    private let purr = WinPurr()
     private let hInstance = GetModuleHandleW(nil)
     private let className = wide("GatinhoCat")
     private var hwnd: HWND?
@@ -94,6 +95,10 @@ final class WinCat {
             ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("AppData/Roaming")
         cat = DesktopCat(settingsURL: base.appendingPathComponent("Gatinho/settings.json"),
                          labelStyle: .windows, dpi: CGFloat(GetDpiForSystem()) / 96)
+        cat.sim.onPurrChange = { [weak self] on in
+            guard let self else { return }
+            purr.set(on && cat.purrSound)
+        }
     }
 
     func run() {
@@ -312,6 +317,7 @@ final class WinCat {
         submenu(menu, "Opacidade", ops)
 
         append(menu, "Mostrar teclas digitadas", id: Cmd.keys, checked: cat.sim.showKeyLabels)
+        append(menu, "Ronronar com som", id: Cmd.purr, checked: cat.purrSound)
         append(menu, "Travar no lugar (cliques atravessam)\tCtrl+Alt+L", id: Cmd.lock, checked: cat.locked)
         _ = AppendMenuW(menu, W32.mfSeparator, 0, nil)
         append(menu, "Sair do Gatinho", id: Cmd.quit)
@@ -336,6 +342,9 @@ final class WinCat {
             cat.setOpacity(Settings.opacities[id - Cmd.opacity])
         case Cmd.keys:
             cat.toggleKeys()
+        case Cmd.purr:
+            cat.togglePurrSound()
+            purr.set(cat.sim.purring && cat.purrSound)
         case Cmd.lock:
             toggleLock()
         case Cmd.quit:
