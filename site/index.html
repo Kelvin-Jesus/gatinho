@@ -2,208 +2,162 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gatinho</title>
-<meta name="description" content="Um gato que mora no canto da tela: digita junto com você, pega o mouse junto, ronrona no carinho e dorme no teclado quando você some. Para Mac, Linux e Windows.">
-<meta name="theme-color" content="#0c1d21">
+<meta name="description" content="Um gato que mora no canto da tela: digita junto com você, pega o mouse quando você pega o seu, cochila quando você some e ronrona no carinho. Swift nativo pra Mac, Linux e Windows.">
+<meta name="theme-color" content="#eef0ee">
 <meta property="og:title" content="Gatinho">
-<meta property="og:description" content="Um gato que mora no canto da tela e fica do seu lado enquanto você trabalha. Mac, Linux e Windows.">
-<meta property="og:image" content="https://kelvin-jesus.github.io/gatinho/img/pelagens.png">
+<meta property="og:description" content="Um gato que mora no canto da tela e reage ao que você faz. Mac, Windows e Linux.">
+<meta property="og:image" content="https://kelvin-jesus.github.io/gatinho/media/og.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23f3b860' d='M10 58V20L18 6l10 12h8L46 6l8 14v38z'/%3E%3Ccircle cx='24' cy='34' r='3.5' fill='%230c1d21'/%3E%3Ccircle cx='40' cy='34' r='3.5' fill='%230c1d21'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='10' width='52' height='46' rx='8' fill='%232d2a2e'/%3E%3Crect x='12' y='14' width='40' height='34' rx='5' fill='%23ffc94d'/%3E%3Cpath d='M22 38V24l5 5h10l5-5v14' fill='none' stroke='%232d2a2e' stroke-width='3.5' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shantell+Sans:ital,wght,BNCE,INFM@0,300..800,-100..100,0..100&display=swap" rel="stylesheet">
+<link rel="preload" href="wasm/gatinho.wasm" as="fetch" type="application/wasm" crossorigin>
 <link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
-<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<a class="pular" href="#casa">Pular pro download</a>
 
-<header class="topo">
-  <a class="marca" href="#" aria-label="Gatinho, início">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 58V20L18 6l10 12h8L46 6l8 14v38z"/><circle cx="24" cy="34" r="3.5"/><circle cx="40" cy="34" r="3.5"/></svg>
-    Gatinho
-  </a>
-  <nav aria-label="Seções">
-    <a href="#dia">O dia dele</a>
-    <a href="#pelagens">Pelagens</a>
-    <a href="#baixar">Baixar</a>
-    <a href="https://github.com/Kelvin-Jesus/gatinho">GitHub</a>
-  </nav>
-  <button class="pausa" type="button" aria-pressed="false" data-pausa>
-    <svg viewBox="0 0 20 20" aria-hidden="true"><rect class="i-pausa" x="5" y="4" width="3.2" height="12" rx="1"/><rect class="i-pausa" x="11.8" y="4" width="3.2" height="12" rx="1"/><path class="i-play" d="M6 4.2v11.6a.8.8 0 0 0 1.2.7l9.3-5.8a.8.8 0 0 0 0-1.4L7.2 3.5a.8.8 0 0 0-1.2.7z"/></svg>
-    <span data-pausa-rotulo>Pausar animações</span>
-  </button>
-</header>
+<div class="barra">
+  <p class="marca">Gatinho <span class="marca-sub">mora no canto da sua tela</span></p>
+  <details class="achados" data-achados>
+    <summary><span data-achados-n>0</span> de 6 travessuras</summary>
+    <div class="achados-painel" data-achados-copia></div>
+  </details>
+</div>
 
-<main id="conteudo">
-  <section class="cena" aria-labelledby="titulo">
-    <div class="ceu" aria-hidden="true"></div>
-    <div class="camada camada-fundo" data-paralaxe="0.12"><svg viewBox="0 0 1440 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><rect x="-20" y="242" width="111" height="182" rx="4" fill="#17383a"/><rect x="-2" y="256" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="12" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="26" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="40" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="54" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="68" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="40" y="275" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="54" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="68" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="-2" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="40" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="68" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="-2" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="26" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="-2" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="12" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="26" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="26" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="40" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="-2" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="12" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="26" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="40" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="54" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="68" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="-2" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="40" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="54" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="99" y="235" width="80" height="189" rx="4" fill="#17383a"/><rect x="107" y="221" width="25" height="16" rx="3" fill="#17383a"/><rect x="129" y="249" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="143" y="249" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="115" y="287" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="129" y="287" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="143" y="287" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="157" y="287" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="115" y="306" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="129" y="306" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="143" y="306" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="157" y="306" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="129" y="325" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="143" y="325" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="115" y="344" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="129" y="344" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="143" y="344" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="115" y="363" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="157" y="363" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="129" y="382" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="143" y="382" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="199" y="223" width="112" height="201" rx="4" fill="#17383a"/><rect x="231" y="237" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="259" y="237" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="287" y="237" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="245" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="259" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="273" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="287" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="231" y="275" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="245" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="287" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="217" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="245" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="273" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="217" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="245" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="259" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="273" y="313" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="231" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="245" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="273" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="217" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="273" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="287" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="217" y="370" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="231" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="217" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="259" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="329" y="144" width="135" height="280" rx="4" fill="#17383a"/><rect x="344" y="158" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="158" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="158" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="414" y="158" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="158" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="442" y="158" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="177" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="177" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="177" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="414" y="177" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="177" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="344" y="196" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="196" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="196" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="344" y="215" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="215" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="215" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="215" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="234" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="234" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="234" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="234" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="414" y="234" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="428" y="234" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="344" y="253" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="253" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="253" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="414" y="253" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="253" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="442" y="253" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="358" y="272" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="272" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="272" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="291" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="291" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="291" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="442" y="291" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="344" y="310" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="310" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="414" y="310" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="310" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="442" y="310" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="344" y="329" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="329" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="372" y="329" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="329" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="329" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="358" y="348" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="344" y="367" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="367" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="367" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="414" y="367" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="367" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="442" y="367" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="344" y="386" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="386" y="386" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="400" y="386" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="414" y="386" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="428" y="386" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="483" y="261" width="118" height="163" rx="4" fill="#17383a"/><rect x="525" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="567" y="275" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="497" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="525" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="553" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="567" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="581" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="511" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="539" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="553" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="581" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="497" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="525" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="567" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="581" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="497" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="525" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="539" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="553" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="567" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="497" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="525" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="539" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="567" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="581" y="370" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="525" y="389" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="553" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="567" y="389" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="581" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="614" y="215" width="108" height="209" rx="4" fill="#17383a"/><rect x="630" y="229" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="644" y="229" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="229" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="672" y="229" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="700" y="229" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="644" y="248" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="248" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="672" y="248" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="686" y="248" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="630" y="267" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="267" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="672" y="267" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="686" y="267" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="630" y="286" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="644" y="286" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="286" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="686" y="286" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="700" y="286" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="630" y="305" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="672" y="305" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="686" y="305" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="324" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="672" y="324" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="700" y="324" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="644" y="343" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="343" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="686" y="343" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="700" y="343" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="644" y="362" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="658" y="362" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="686" y="362" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="700" y="362" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="630" y="381" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="658" y="381" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="672" y="381" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="700" y="381" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="738" y="279" width="95" height="145" rx="4" fill="#17383a"/><rect x="796" y="293" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="810" y="293" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="754" y="312" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="768" y="312" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="796" y="312" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="810" y="312" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="754" y="331" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="768" y="331" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="754" y="350" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="782" y="350" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="810" y="350" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="754" y="369" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="782" y="388" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="796" y="388" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="810" y="388" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="857" y="270" width="121" height="154" rx="4" fill="#17383a"/><rect x="886" y="284" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="914" y="284" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="928" y="284" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="956" y="284" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="956" y="303" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="872" y="322" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="886" y="322" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="900" y="322" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="956" y="322" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="900" y="341" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="914" y="341" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="928" y="341" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="956" y="341" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="872" y="360" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="886" y="360" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="928" y="360" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="942" y="360" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="956" y="360" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="872" y="379" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="900" y="379" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="914" y="379" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="942" y="379" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="956" y="379" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="997" y="166" width="99" height="258" rx="4" fill="#17383a"/><rect x="1016" y="180" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1030" y="180" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="180" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="180" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1030" y="199" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="199" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="199" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="218" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="218" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="218" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="237" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="1030" y="237" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1044" y="237" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="237" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1030" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1044" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="256" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1044" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="275" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1030" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="294" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1044" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="313" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1030" y="332" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1030" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="351" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1016" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1044" y="370" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="370" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1044" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1058" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1072" y="389" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1114" y="275" width="92" height="149" rx="4" fill="#17383a"/><rect x="1151" y="261" width="33" height="16" rx="3" fill="#17383a"/><rect x="1143" y="289" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1157" y="289" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1171" y="289" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1185" y="289" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1143" y="308" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="1171" y="327" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1185" y="327" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1157" y="346" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1157" y="365" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1185" y="365" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1129" y="384" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1157" y="384" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1171" y="384" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1221" y="138" width="127" height="286" rx="4" fill="#17383a"/><rect x="1282" y="152" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1296" y="152" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1310" y="152" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1240" y="171" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1254" y="171" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1310" y="171" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="171" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1240" y="190" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1268" y="190" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1282" y="190" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1310" y="190" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="190" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1254" y="209" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1282" y="209" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="209" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1282" y="228" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1296" y="228" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1310" y="228" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="228" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1240" y="247" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1268" y="247" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1310" y="247" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="247" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1254" y="266" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1296" y="266" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1310" y="266" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="266" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1254" y="285" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="285" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1240" y="304" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1268" y="304" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1282" y="304" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1268" y="323" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1296" y="323" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1240" y="342" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1268" y="342" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1282" y="342" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1310" y="342" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1324" y="342" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1240" y="361" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1268" y="361" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1296" y="361" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1310" y="361" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="361" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1254" y="380" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1282" y="380" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1296" y="380" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1310" y="380" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1324" y="380" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1362" y="152" width="147" height="272" rx="4" fill="#17383a"/><rect x="1390" y="166" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1404" y="166" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="166" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1460" y="166" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1474" y="166" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1488" y="166" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1376" y="185" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="185" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1460" y="185" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1376" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1390" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1446" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1460" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1488" y="204" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1390" y="223" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="223" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="223" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1460" y="223" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="242" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1446" y="242" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1488" y="242" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1376" y="261" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1390" y="261" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="261" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1446" y="261" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1474" y="261" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1376" y="280" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="1390" y="280" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="280" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1474" y="280" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1376" y="299" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1404" y="299" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="299" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="299" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1474" y="299" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1376" y="318" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="1404" y="337" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="337" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1432" y="337" width="6" height="8" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="1474" y="337" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1390" y="356" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1390" y="375" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1404" y="375" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1460" y="375" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1474" y="375" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1390" y="394" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1404" y="394" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1418" y="394" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1460" y="394" width="6" height="8" rx="1.5" fill="#1d4244"/><rect x="1474" y="394" width="6" height="8" rx="1.5" fill="#1d4244"/></svg></div>
-    <div class="camada camada-meio" data-paralaxe="0.06"><svg viewBox="0 0 1440 420" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><rect x="-20" y="256" width="189" height="168" rx="4" fill="#0f2629"/><rect x="-2" y="270" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="34" y="270" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="52" y="270" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="70" y="270" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="88" y="270" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="124" y="270" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="142" y="270" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="70" y="294" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="88" y="294" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="106" y="294" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="34" y="318" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="52" y="318" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="70" y="318" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="88" y="318" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="124" y="318" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="142" y="318" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="-2" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="16" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="34" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="52" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="70" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="88" y="342" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="106" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="124" y="342" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="-2" y="366" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="16" y="366" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="34" y="366" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="52" y="366" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="70" y="366" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="106" y="366" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="124" y="366" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="-2" y="390" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="16" y="390" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="70" y="390" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="106" y="390" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="124" y="390" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="190" y="258" width="96" height="166" rx="4" fill="#0f2629"/><rect x="219" y="244" width="22" height="16" rx="3" fill="#0f2629"/><rect x="224" y="272" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="242" y="272" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="260" y="272" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="242" y="296" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="260" y="296" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="206" y="320" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="224" y="320" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="260" y="320" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="206" y="368" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="224" y="368" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="242" y="368" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="260" y="368" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="300" y="241" width="142" height="183" rx="4" fill="#0f2629"/><rect x="330" y="255" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="420" y="255" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="330" y="279" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="348" y="279" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="366" y="279" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="402" y="279" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="420" y="279" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="312" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="330" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="348" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="366" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="384" y="303" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="402" y="303" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="420" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="312" y="327" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="330" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="348" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="366" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="384" y="327" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="402" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="312" y="351" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="366" y="351" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="402" y="351" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="312" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="348" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="402" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="420" y="375" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="459" y="289" width="150" height="135" rx="4" fill="#0f2629"/><rect x="475" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="511" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="565" y="303" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="493" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="511" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="529" y="327" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="547" y="327" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="547" y="351" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="583" y="351" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="475" y="375" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="493" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="529" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="565" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="583" y="375" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="634" y="291" width="162" height="133" rx="4" fill="#0f2629"/><rect x="727" y="277" width="22" height="16" rx="3" fill="#0f2629"/><rect x="665" y="305" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="719" y="305" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="755" y="305" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="683" y="329" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="701" y="329" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="719" y="329" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="737" y="329" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="755" y="329" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="755" y="353" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="647" y="377" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="683" y="377" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="806" y="262" width="98" height="162" rx="4" fill="#0f2629"/><rect x="859" y="276" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="877" y="276" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="823" y="300" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="859" y="300" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="877" y="300" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="841" y="324" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="877" y="324" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="823" y="348" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="841" y="348" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="859" y="348" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="823" y="372" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="911" y="194" width="141" height="230" rx="4" fill="#0f2629"/><rect x="968" y="208" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1004" y="208" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="968" y="232" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="968" y="256" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="986" y="256" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1004" y="256" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="932" y="280" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="950" y="280" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="986" y="280" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="950" y="304" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1004" y="328" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="932" y="352" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="950" y="352" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="968" y="352" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="986" y="352" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1004" y="352" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="950" y="376" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="968" y="376" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1004" y="376" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1022" y="376" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1076" y="213" width="94" height="211" rx="4" fill="#0f2629"/><rect x="1091" y="227" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1145" y="227" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1109" y="251" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1109" y="275" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1127" y="275" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1145" y="275" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1091" y="299" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1109" y="299" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1127" y="299" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="1091" y="323" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1109" y="323" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1127" y="323" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1145" y="323" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1091" y="347" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1145" y="347" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1091" y="371" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1109" y="371" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.55"/><rect x="1176" y="261" width="118" height="163" rx="4" fill="#0f2629"/><rect x="1184" y="247" width="22" height="16" rx="3" fill="#0f2629"/><rect x="1194" y="275" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1212" y="275" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.7"/><rect x="1248" y="275" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1266" y="275" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1230" y="299" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1248" y="299" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1212" y="323" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1194" y="347" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1212" y="347" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1266" y="347" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1194" y="371" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1212" y="371" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1230" y="371" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="0.85"/><rect x="1305" y="307" width="164" height="117" rx="4" fill="#0f2629"/><rect x="1319" y="321" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1373" y="321" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1409" y="321" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1445" y="321" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1355" y="345" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1391" y="345" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1445" y="345" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1319" y="369" width="10" height="13" rx="1.5" fill="#16312f"/><rect x="1373" y="369" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/><rect x="1445" y="369" width="10" height="13" rx="1.5" fill="#f6c26b" opacity="1"/></svg></div>
+<main>
+  <section class="folha" aria-label="Folha onde você escreve e eu digito junto">
+    <p class="frase" data-frase>oi. eu moro no canto da sua tel<span class="letra" data-letra>a</span>. escreve qualquer coisa aqui embaixo que eu digito junto.</p>
+    <div class="escrita" data-escrita contenteditable="true" role="textbox" aria-multiline="true" aria-label="Escreve aqui, e o gato digita junto" spellcheck="false" data-vazia></div>
+    <p class="aviso" data-aviso-letra hidden><span class="vaga-letra" data-vaga-letra aria-hidden="true"></span>Derrubei o a de “tela”. Arrasta ele de volta, ou <button type="button" class="texto-botao" data-letra-volta>põe no lugar</button></p>
 
-    <div class="cena-grade">
-      <div class="chamada">
-        <h1 id="titulo">Um gato que mora no canto da&nbsp;tela.</h1>
-        <p class="lead">Ele digita junto com você, pata por pata. Pega o mouse quando você pega o seu. Se você some, cochila em cima do teclado, e quando você volta acorda meio atordoado.</p>
-        <div class="acao">
-          <a class="botao" data-baixar href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-macos.zip">
-            <span data-baixar-rotulo>Baixar pro Mac</span>
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m0 0-4-4m4 4 4-4M4 16h12"/></svg>
-          </a>
-          <p class="acao-nota"><span data-baixar-nota>Apple Silicon · .zip</span> · <a href="#baixar">outros sistemas</a></p>
-        </div>
-      </div>
-
-      <div class="predio" data-paralaxe="-0.04">
-        <div class="andar" aria-hidden="true"><span class="jan-p"></span><span class="jan-p acesa"></span><span class="jan-p"></span></div>
-        <figure class="janela janela-grande">
-          <div class="vidro">
-            <span class="cortina" aria-hidden="true"></span>
-            <img data-gif="digitando" src="img/digitando.gif" width="495" height="450" alt="Gato laranja rajado digitando num tecladinho e depois mexendo no mouse">
-          </div>
-          <div class="peitoril" aria-hidden="true">
-            <svg class="planta" viewBox="0 0 120 90"><path d="M60 88c-2-20-12-34-30-44 16 2 26 10 30 22 2-20 10-36 26-46-6 16-10 32-12 52 6-12 16-18 30-20-12 8-20 20-24 36z"/><rect x="42" y="70" width="36" height="20" rx="5"/></svg>
-          </div>
-          <figcaption class="sono" role="status" data-sono-legenda></figcaption>
-        </figure>
-      </div>
-    </div>
-    <div class="noite" aria-hidden="true"></div>
-  </section>
-
-  <section class="fachada" id="dia" aria-labelledby="t-dia">
-    <div class="par">
-      <figure class="janela">
-        <div class="vidro"><img data-gif="soneca" src="img/soneca.gif" width="495" height="450" loading="lazy" alt="Gato cinza ficando com sono e dormindo em cima do teclado, com Zs subindo"></div>
-      </figure>
-      <div class="texto">
-        <h2 id="t-dia">O dia dele segue o seu</h2>
-        <ol class="relogio">
-          <li><span class="hora">digitando</span><p>Cada tecla que você aperta, ele aperta uma também, com a pata do lado certo. A letrinha sobe em cima do teclado dele.</p></li>
-          <li><span class="hora">no mouse</span><p>Você pega o mouse, ele pega o dele. Rola a rodinha junto e segue o ponteiro com os olhos.</p></li>
-          <li><span class="hora">15 s parado</span><p>Começa a sonhar acordado, olhando pro nada.</p></li>
-          <li><span class="hora">40 s parado</span><p>Dorme em cima do teclado. Fica respirando devagar, soltando Zs.</p></li>
-          <li><span class="hora">você voltou</span><p>Acorda meio atordoado e sacode a cabeça.</p></li>
-        </ol>
-        <p class="dica">Este site faz igual: fica 40 segundos sem mexer em nada e olha o gato lá em cima.</p>
-      </div>
+    <div class="primeira-tecla">
+      <a class="tecla tecla-acesa" data-baixar href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-macos.zip">
+        <span class="tecla-topo"><span data-baixar-rotulo>Me leva pro Mac</span><span class="tecla-simbolo" aria-hidden="true">⏎</span></span>
+      </a>
+      <p class="primeira-nota" data-baixar-nota>De graça, código aberto. Também moro no <a href="#casa">Windows e no Linux</a>.</p>
     </div>
   </section>
 
-  <section class="fachada" aria-labelledby="t-carinho">
-    <div class="par par-invertido">
-      <figure class="janela">
-        <div class="vidro"><img data-gif="carinho" src="img/carinho.gif" width="495" height="450" loading="lazy" alt="Gata calico recebendo carinho na cabeça, de olhos fechados, soltando coraçõezinhos"></div>
-      </figure>
-      <div class="texto">
-        <h2 id="t-carinho">Dá pra fazer carinho</h2>
-        <p>Clica e segura na cabeça dele. Ele fecha os olhos, baixa as orelhas, solta uns coraçõezinhos e, depois de um instante, começa a ronronar. Com som de verdade.</p>
-        <p class="sutil">Se o ronronar atrapalhar sua chamada de vídeo, desliga o som no menu do clique direito.</p>
+  <section class="diario" aria-label="Meu diário">
+    <article class="entrada" data-estado="digitando">
+      <p class="hora"><span class="hora-texto">9h02</span></p>
+      <p>Você chegou e começou a digitar. Digitei junto: tecla da esquerda com a pata esquerda, tecla da direita com a direita. A letrinha sobe em cima do meu teclado pra você ver que eu estou acompanhando.</p>
+    </article>
+    <article class="entrada" data-estado="mouse">
+      <p class="hora"><span class="hora-texto">10h15</span></p>
+      <p>Você foi pro mouse, eu fui pro meu. Girei a rodinha quando você girou a sua. Aí a setinha parou bem perto de mim, eu me abaixei, balancei o rabo e dei uma patada nela. Errei.</p>
+    </article>
+    <article class="entrada" data-estado="carinho">
+      <p class="hora"><span class="hora-texto">11h40</span></p>
+      <p>Você segurou o clique na minha cabeça. Fechei os olhos, deitei as orelhas e ronronei. Aqui na página não sai som. No computador de verdade, sai.</p>
+    </article>
+    <article class="entrada" data-estado="bolinha">
+      <p class="hora"><span class="hora-texto">12h05</span></p>
+      <p>Sete segundos sem ninguém mexer em nada e apareceu uma bolinha de lã rolando. Brinquei com ela até você voltar a digitar, e ela foi embora sozinha. Se ela aparecer aqui, cutuca.</p>
+    </article>
+    <article class="entrada" data-estado="sonhando">
+      <p class="hora"><span class="hora-texto">12h20</span></p>
+      <p>Quinze segundos de silêncio. Fiquei olhando pro nada, de olho meio fechado.</p>
+    </article>
+    <article class="entrada" data-estado="dormindo">
+      <p class="hora"><span class="hora-texto">12h45</span></p>
+      <p>Quarenta segundos. Lambi a pata, deitei a cabeça no teclado e dormi. Tem dia que eu durmo com a pata em cima dos olhos.</p>
+    </article>
+    <article class="entrada" data-estado="voltou">
+      <p class="hora"><span class="hora-texto">14h00</span></p>
+      <p>Você voltou. Sacudi a cabeça, me espreguicei, bocejei bem grande e voltei pro trabalho.</p>
+    </article>
+
+    <article class="entrada entrada-pelagem">
+      <p class="hora"><span class="hora-texto">15h30</span></p>
+      <p>Nem sempre eu sou laranja. No computador você troca minha pelagem clicando com o botão direito em mim. Aqui, escolhe uma cor e eu mudo lá no canto:</p>
+      <fieldset class="pelagens" data-pelagens>
+        <legend class="visualmente-oculto">Minha pelagem</legend>
+        <label class="pelagem" style="--a:#2b2b2e;--b:#f5f2ec"><input type="radio" name="pelagem" value="0"><span class="visualmente-oculto">Tuxedo, preto e branco</span></label>
+        <label class="pelagem" style="--a:#f0a15a;--b:#c9713a"><input type="radio" name="pelagem" value="1" checked><span class="visualmente-oculto">Laranja rajado</span></label>
+        <label class="pelagem" style="--a:#a7835f;--b:#6f5238"><input type="radio" name="pelagem" value="2"><span class="visualmente-oculto">Rajado marrom</span></label>
+        <label class="pelagem" style="--a:#efe3cf;--b:#4a3a30"><input type="radio" name="pelagem" value="3"><span class="visualmente-oculto">Siamês</span></label>
+        <label class="pelagem" style="--a:#f4efe6;--b:#e39a4c;--c:#3a3330"><input type="radio" name="pelagem" value="4"><span class="visualmente-oculto">Calico, três cores</span></label>
+        <label class="pelagem" style="--a:#2a2729;--b:#2a2729"><input type="radio" name="pelagem" value="5"><span class="visualmente-oculto">Preto</span></label>
+        <label class="pelagem" style="--a:#f7f4ef;--b:#f7f4ef"><input type="radio" name="pelagem" value="6"><span class="visualmente-oculto">Branco</span></label>
+        <label class="pelagem" style="--a:#8d97a6;--b:#8d97a6"><input type="radio" name="pelagem" value="7"><span class="visualmente-oculto">Cinza-azulado</span></label>
+        <label class="pelagem" style="--a:#8f949b;--b:#f5f2ec"><input type="radio" name="pelagem" value="8"><span class="visualmente-oculto">Cinza e branco</span></label>
+      </fieldset>
+      <p class="pelagem-nome" data-pelagem-nome aria-hidden="true">laranja rajado</p>
+    </article>
+
+    <article class="entrada entrada-teclas">
+      <p class="hora"><span class="hora-texto">16h10</span></p>
+      <p class="aviso" data-aviso-paragrafo hidden>Sentei em cima disso aqui. <button type="button" class="texto-botao" data-tirar-paragrafo>Me tira daí</button></p>
+      <div class="teclas-texto" data-paragrafo>
+        <p>Uma coisa séria, sobre as suas teclas. Eu preciso vê-las pra digitar junto, então guardo cada uma só enquanto ela está apertada, pra saber qual pata usar e qual letrinha mostrar. Nada vai pro disco, nada sai do computador, não tem conta nem internet no meio.</p>
+        <p>No Mac isso pede a permissão de Acessibilidade. No Linux com Wayland, seu usuário precisa estar no grupo <code>input</code>. Quem quiser conferir, <a href="https://github.com/Kelvin-Jesus/gatinho">o meu código está todo no GitHub</a>.</p>
       </div>
-    </div>
+    </article>
+
+    <article class="entrada">
+      <p class="hora"><span class="hora-texto">17h00</span></p>
+      <p>Pra me mudar de lugar, me arrasta pelo corpo. O clique direito abre meu menu: pelagem, tamanho, transparência, as letrinhas, o som do ronronar. Control, Option e L no Mac (Ctrl, Alt e L nos outros) me travam no lugar, e aí os cliques passam através de mim.</p>
+    </article>
   </section>
 
-  <section class="fachada fachada-pelagens" id="pelagens" aria-labelledby="t-pelagens">
-    <div class="pelagens">
-      <div class="texto">
-        <h2 id="t-pelagens">Nove gatos, um de cada vez</h2>
-        <p>Troca a pelagem pelo clique direito em cima dele.</p>
-        <ul class="nomes">
-          <li>Tuxedo</li><li>Laranja rajado</li><li>Rajado marrom</li><li>Siamês</li><li>Calico</li><li>Preto</li><li>Branco</li><li>Cinza-azulado</li><li>Cinza e branco</li>
-        </ul>
-      </div>
-      <figure class="janela janela-caixilho">
-        <div class="vidro">
-          <img src="img/pelagens.png" width="660" height="600" loading="lazy" alt="Grade com nove gatos de pelagens diferentes, cada um num estado: digitando, no mouse, recebendo carinho, dormindo e sonhando">
-          <span class="caixilho" aria-hidden="true"></span>
-        </div>
-      </figure>
+  <section class="casa" id="casa" aria-labelledby="t-casa">
+    <h2 id="t-casa" class="casa-titulo">Me leva pra casa</h2>
+    <div class="placa" data-placa data-impeccable-ignore="hard-offset-shadow">
+      <a class="tecla" data-so="mac" href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-macos.zip"><span class="tecla-topo"><span class="tecla-nome">Mac</span><span class="tecla-meta"><span class="meta-longa">Apple Silicon · .zip</span><span class="meta-curta">.zip</span></span></span></a>
+      <a class="tecla" data-so="windows" href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-windows.zip"><span class="tecla-topo"><span class="tecla-nome">Windows</span><span class="tecla-meta"><span class="meta-longa">pasta com .exe · .zip</span><span class="meta-curta">.exe</span></span></span></a>
+      <a class="tecla" data-so="linux" href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-linux-x86_64"><span class="tecla-topo"><span class="tecla-nome">Linux</span><span class="tecla-meta"><span class="meta-longa">x86_64 · executável</span><span class="meta-curta">x86_64</span></span></span></a>
     </div>
-  </section>
+    <p class="aviso" data-aviso-botao hidden>Sentei na tecla. Aperta assim mesmo, que baixa igual. <button type="button" class="texto-botao" data-tirar-botao>Me tira daí</button></p>
+    <p class="aviso" data-aviso-torto hidden>Saí e deixei a tecla torta. <button type="button" class="texto-botao" data-endireitar>Endireita</button></p>
 
-  <section class="fachada" aria-labelledby="t-conviver">
-    <div class="colunas">
-      <div>
-        <h2 id="t-conviver">Convivendo com ele</h2>
-        <ul class="lista">
-          <li>Arrasta pelo corpo pra mudar ele de lugar.</li>
-          <li>Clique direito abre o menu: pelagem, tamanho, transparência, letrinhas, som do ronronar, travar no lugar. No Mac o menu também fica na barra de menus, no Windows na bandeja.</li>
-          <li><kbd>⌃</kbd><kbd>⌥</kbd><kbd>L</kbd> no Mac, <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>L</kbd> no resto: trava o gato. Travado, os cliques passam através dele.</li>
-        </ul>
-      </div>
-      <div class="privacidade">
-        <h2>Sobre o teclado</h2>
-        <p>O gato precisa ver suas teclas pra digitar junto, então vale dizer o que ele faz com elas: guarda na memória só enquanto a tecla está apertada, pra saber qual pata usar e qual letrinha mostrar. Nada vai pra disco, nada sai da máquina. Em campo de senha o próprio sistema esconde as teclas dele.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="terreo" id="baixar" aria-labelledby="t-baixar">
-    <div class="terreo-luz" aria-hidden="true"></div>
-    <div class="terreo-conteudo">
-      <h2 id="t-baixar">Leva ele pra casa</h2>
-      <div class="sistemas">
-        <article class="sistema" data-so="mac">
-          <div class="sistema-topo">
-            <h3>Mac <small>Apple Silicon</small></h3>
-            <a class="botao botao-pequeno" href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-macos.zip">Baixar .zip</a>
-          </div>
-          <ol class="passos">
-            <li>Descompacta e arrasta o <b>Gatinho</b> pra pasta Aplicativos.</li>
-            <li>O app não é notarizado pela Apple, então o macOS barra na primeira vez. Vai em <b>Ajustes do Sistema › Privacidade e Segurança</b> e clica em <b>Abrir Mesmo Assim</b>.</li>
-            <li>Ele pede acesso de <b>Acessibilidade</b>: é assim que o gato enxerga o teclado.</li>
-          </ol>
-        </article>
-        <article class="sistema" data-so="windows">
-          <div class="sistema-topo">
-            <h3>Windows</h3>
-            <a class="botao botao-pequeno" href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-windows.zip">Baixar .zip</a>
-          </div>
-          <ol class="passos">
-            <li>Descompacta tudo numa pasta e abre o <b>Gatinho.exe</b>.</li>
-            <li>Ele aparece na bandeja, perto do relógio.</li>
-          </ol>
-        </article>
-        <article class="sistema" data-so="linux">
-          <div class="sistema-topo">
-            <h3>Linux <small>x86_64</small></h3>
-            <a class="botao botao-pequeno" href="https://github.com/Kelvin-Jesus/gatinho/releases/latest/download/Gatinho-linux-x86_64">Baixar</a>
-          </div>
-          <ol class="passos">
-            <li>Dá permissão e abre: <code>chmod +x Gatinho-linux-x86_64 &amp;&amp; ./Gatinho-linux-x86_64</code></li>
-            <li>No Wayland (GNOME, KDE) ele lê o teclado de <code>/dev/input</code>. Entra no grupo <code>input</code> com <code>sudo usermod -aG input $USER</code> e sai e entra na sessão.</li>
-          </ol>
-        </article>
-      </div>
-      <p class="celular" data-celular hidden>Ele vive em computador. Abre este link no Mac, no Windows ou no Linux.</p>
-
-      <details class="compilar">
-        <summary>Prefiro compilar eu mesmo</summary>
-        <div class="compilar-corpo">
-          <p>Mac, só com as Command Line Tools:</p>
-          <pre><code>./certificado-local.sh
-./build.sh --install</code></pre>
-          <p>Linux:</p>
-          <pre><code>sudo apt install libx11-dev libxext-dev libxi-dev
-swift build -c release --static-swift-stdlib
-.build/release/Gatinho</code></pre>
-          <p>Windows, com o Swift instalado (<code>winget install Swift.Toolchain</code>):</p>
-          <pre><code>swift build -c release
-.build\release\Gatinho.exe</code></pre>
-        </div>
-      </details>
-    </div>
+    <p class="instrucoes" data-instrucoes>
+      <span data-para="mac"><b>Mac</b> descompacta, me põe em Aplicativos e, na primeira vez, clica em Abrir Mesmo Assim em Privacidade e Segurança.</span>
+      <span data-para="windows" hidden><b>Windows</b> descompacta numa pasta e abre o Gatinho.exe. Eu fico também na bandeja, perto do relógio.</span>
+      <span data-para="linux" hidden><b>Linux</b> <code>chmod +x Gatinho-linux-x86_64</code> e abre. No Wayland, entra no grupo <code>input</code>.</span>
+    </p>
+    <p class="celular" data-celular hidden>Eu moro em computador, não em celular. Abre esta página no Mac, no Windows ou no Linux.</p>
+    <p class="fim">Versão 0.1.0. Quem me fez viu o gatinho do <a href="https://xiaozhilittleone.com/">LittleOne</a> e quis um desses no próprio computador, não numa aba. Sou todo em Swift nos três sistemas, e o gato desta página é o mesmo código, compilado pra WebAssembly. Pra me montar do zero, <a href="https://github.com/Kelvin-Jesus/gatinho#readme">as instruções estão no README</a>.</p>
   </section>
 </main>
 
-<footer class="rodape">
-  <p>Fiz porque vi o gatinho do <a href="https://xiaozhilittleone.com/">LittleOne</a> e quis um desses rodando no meu computador, não numa aba do navegador. É tudo Swift, nos três sistemas.</p>
-  <p><a href="https://github.com/Kelvin-Jesus/gatinho">Código no GitHub</a></p>
-</footer>
+<!-- A margem direita é minha: minhas pendências em cima, meu ninho embaixo. No celular vira uma faixa no pé da tela. -->
+<aside class="margem" aria-label="Caderno do gato">
+  <div class="margem-notas">
+    <p class="margem-titulo">pendências do gato</p>
+    <ol class="achados-lista" data-achados-lista>
+      <li data-achado="letra"><span class="achado-nome">derrubei uma letra</span><span class="achado-dica">espera olhando a primeira frase</span></li>
+      <li data-achado="texto"><span class="achado-nome">sentei em cima do texto</span><span class="achado-dica">desce até onde eu falo das suas teclas</span></li>
+      <li data-achado="tecla"><span class="achado-nome">sentei na tecla de baixar</span><span class="achado-dica">vai até o teclado grande, lá no fim</span></li>
+      <li data-achado="torta"><span class="achado-nome">deixei a tecla torta</span><span class="achado-dica">me tira de cima da tecla</span></li>
+      <li data-achado="bolinha"><span class="achado-nome">bolinha de lã</span><span class="achado-dica">fica sete segundos sem mexer em nada</span></li>
+      <li data-achado="ronronou"><span class="achado-nome">ronronei</span><span class="achado-dica">segura o clique na minha cabeça</span></li>
+    </ol>
+    <p class="margem-conta"><span data-achados-n>0</span> de 6 travessuras</p>
+    <button type="button" class="texto-botao" data-arrumar hidden>Arrumar a bagunça</button>
+  </div>
+  <div class="margem-pe">
+    <div class="margem-estado">
+      <p class="agora" data-agora>agora: chegando</p>
+      <button type="button" class="texto-botao" data-pausa aria-pressed="false" aria-label="Pausar o gato"><span data-pausa-rotulo>Pausar<span class="rotulo-gato"> o gato</span></span></button>
+    </div>
+    <div class="ninho" data-ninho></div>
+  </div>
+</aside>
 
-<div class="grao" aria-hidden="true"></div>
-<script src="main.js" defer></script>
+<!-- Eu. Moro no ninho da margem; às vezes pulo pra cima de um texto ou de uma tecla. -->
+<div class="gato" data-gato>
+  <canvas width="660" height="600" aria-hidden="true"></canvas>
+  <img class="gato-parado" data-parado src="media/pelagens/laranja.webp" width="660" height="600" alt="">
+</div>
+<p class="visualmente-oculto" role="status" aria-live="polite" data-anuncio></p>
+
+<script type="module" src="main.js"></script>
 </body>
 </html>
