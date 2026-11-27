@@ -1,0 +1,88 @@
+import AppKit
+import ApplicationServices
+
+/// Escuta teclado e mouse do sistema todo e repassa para o CatSim.
+/// Teclado global exige permissão de Acessibilidade; mouse não exige.
+final class InputMonitor {
+    private let sim: CatSim
+    private let onLockHotkey: () -> Void
+    private var keyMonitors: [Any] = []
+    private var mouseMonitors: [Any] = []
+    private var trusted = false
+    private var timer: Timer?
+
+    init(sim: CatSim, onLockHotkey: @escaping () -> Void) {
+        self.sim = sim
+        self.onLockHotkey = onLockHotkey
+    }
+
+    func start() {
+        trusted = AXIsProcessTrusted()
+        installKeyMonitors()
+        installMouseMonitors()
+        // Quando a permissão é concedida com o app aberto, reinstala os monitores de teclado.
+        timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            self?.checkTrust()
+        }
+    }
+
+    private func checkTrust() {
+        let now = AXIsProcessTrusted()
+        guard now != trusted else { return }
+        trusted = now
+        keyMonitors.forEach { NSEvent.removeMonitor($0) }
+        keyMonitors.removeAll()
+        installKeyMonitors()
+    }
+
+    private func installKeyMonitors() {
+        let mask: NSEvent.EventTypeMask = [.keyDown, .keyUp, .flagsChanged]
+        if let g = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: { [weak self] e in self?.handleKey(e) }) {
+            keyMonitors.append(g)
+        }
+        if let l = NSEvent.addLocalMonitorForEvents(matching: mask, handler: { [weak self] e in self?.handleKey(e); return e }) {
+            keyMonitors.append(l)
+        }
+    }
+
+    private func installMouseMonitors() {
+        let mask: NSEvent.EventTypeMask = [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp,
+                                           .otherMouseDown, .otherMouseUp, .scrollWheel]
+        if let g = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: { [weak self] e in self?.handleMouse(e) }) {
+            mouseMonitors.append(g)
+        }
+    }
+
+    private func handleKey(_ e: NSEvent) {
+        switch e.type {
+        case .keyDown:
+            let f = e.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if e.keyCode == 37, f.contains(.control), f.contains(.option), !e.isARepeat { // ⌃⌥L
+                onLockHotkey()
+            }
+            sim.keyDown(code: e.keyCode, label: KeyLabels.label(for: e), isRepeat: e.isARepeat)
+        case .keyUp:
+            sim.keyUp(code: e.keyCode)
+        case .flagsChanged:
+            sim.modifierChanged(code: e.keyCode)
+        default:
+            break
+        }
+    }
+
+    private func handleMouse(_ e: NSEvent) {
+        switch e.type {
+        case .leftMouseDown: sim.mouseButton(0, down: true)
+        case .leftMouseUp: sim.mouseButton(0, down: false)
+        case .rightMouseDown: sim.mouseButton(1, down: true)
+        case .rightMouseUp: sim.mouseButton(1, down: false)
+        case .otherMouseDown: sim.mouseButton(2, down: true)
+        case .otherMouseUp: sim.mouseButton(2, down: false)
+        case .scrollWheel:
+            let dy = e.hasPreciseScrollingDeltas ? e.scrollingDeltaY * 0.15 : e.scrollingDeltaY * 1.5
+            sim.scroll(dy)
+        default:
+            break
+        }
+    }
+}
