@@ -112,7 +112,9 @@ public final class CatSim {
         nextEarTwitch = now + 6
     }
 
-    private var now: TimeInterval { Date().timeIntervalSinceReferenceDate }
+    /// Relógio dos eventos. O gravador de GIFs troca por um relógio simulado.
+    public var clock: () -> TimeInterval = { Date().timeIntervalSinceReferenceDate }
+    private var now: TimeInterval { clock() }
 
     // MARK: - Eventos
 

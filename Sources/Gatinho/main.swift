@@ -13,6 +13,9 @@ if let i = args.firstIndex(of: "--snapshot"), i + 1 < args.count {
 if args.contains("--check-smooth") {
     exit(SelfTest.checkSmoothness() ? 0 : 1)
 }
+if let i = args.firstIndex(of: "--record"), i + 2 < args.count {
+    exit(Recorder.record(args[i + 1], to: args[i + 2]) ? 0 : 1)
+}
 if args.contains("--benchmark") {
     SelfTest.benchmark(scale: 1)
     SelfTest.benchmark(scale: 2)

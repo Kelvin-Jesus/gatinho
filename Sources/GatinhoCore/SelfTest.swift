@@ -73,7 +73,7 @@ public enum SelfTest {
         let cells = states()
         let cw = Int(Geo.size.width), ch = Int(Geo.size.height)
         let canvas = SoftCanvas(width: cw * 3, height: ch * 3)
-        canvas.fillBackground(RGB(0xFADB8C))
+        canvas.fillBackground(RGB(0xF7EEDF))
         let painter = SoftPainter(canvas)
         for (i, sim) in cells.enumerated() {
             painter.save()
