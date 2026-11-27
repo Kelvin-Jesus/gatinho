@@ -1,0 +1,99 @@
+# Compila e testa o Gatinho nos 3 sistemas. Os prints e os executáveis ficam nos artefatos da execução.
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar e montar o .app
+        run: ./build.sh
+      - name: Testes sem janela
+        run: |
+          B=.build/release/Gatinho
+          $B --check-smooth
+          $B --snapshot estados-macos.png
+          zip -qr Gatinho-macos.zip Gatinho.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gatinho-macos
+          path: |
+            Gatinho-macos.zip
+            estados-macos.png
+
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Imagem de teste (Swift + X11 + Xvfb)
+        run: docker build -t gatinho-linux -f ci/linux.Dockerfile ci
+      - name: Compilar, testar e abrir numa tela virtual
+        run: |
+          docker run --rm -v "$PWD":/src gatinho-linux bash -c '
+            set -e
+            swift build -c release --static-swift-stdlib
+            B=.build/release/Gatinho
+            $B --check-smooth
+            $B --snapshot estados-linux.png
+            ci/linux-smoke.sh $B shots-linux
+            cp $B gatinho-linux-$(uname -m)'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gatinho-linux
+          path: |
+            gatinho-linux-*
+            estados-linux.png
+            shots-linux/
+
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: compnerd/gha-setup-swift@main
+        with:
+          branch: swift-6.1-release
+          tag: 6.1-RELEASE
+      - name: Compilar
+        run: swift build -c release
+      - name: Testes sem janela
+        shell: pwsh
+        run: |
+          $b = ".build\release\Gatinho.exe"
+          # Executável de janela (sem console): confere pelo código de saída e pelo arquivo gerado.
+          $p = Start-Process $b -ArgumentList "--check-smooth" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "check-smooth falhou" }
+          $p = Start-Process $b -ArgumentList "--snapshot","estados-windows.png" -Wait -PassThru
+          if (-not (Test-Path estados-windows.png)) { throw "snapshot não foi gerado" }
+      - name: Abrir a janela por alguns segundos
+        shell: pwsh
+        run: |
+          $p = Start-Process ".build\release\Gatinho.exe" -PassThru
+          Start-Sleep -Seconds 5
+          if ($p.HasExited) { throw "o app fechou sozinho (código $($p.ExitCode))" }
+          Add-Type -AssemblyName System.Windows.Forms,System.Drawing
+          $s = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bmp = New-Object System.Drawing.Bitmap $s.Width, $s.Height
+          [System.Drawing.Graphics]::FromImage($bmp).CopyFromScreen($s.Location, [System.Drawing.Point]::Empty, $s.Size)
+          $bmp.Save("tela-windows.png")
+          Stop-Process $p
+      - name: Empacotar com as DLLs do Swift
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dist | Out-Null
+          Copy-Item .build\release\Gatinho.exe dist\
+          $rt = Split-Path (Get-Command swiftCore.dll -ErrorAction SilentlyContinue).Source
+          if (-not $rt) { $rt = Split-Path (where.exe swiftCore.dll | Select-Object -First 1) }
+          Copy-Item "$rt\*.dll" dist\
+          Compress-Archive dist\* Gatinho-windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gatinho-windows
+          path: |
+            Gatinho-windows.zip
+            estados-windows.png
+            tela-windows.png

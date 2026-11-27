@@ -56,7 +56,9 @@ shot 7-com-compositor
 
 # Trava (Ctrl+Alt+L) e confere que o processo segue vivo.
 xdotool key ctrl+alt+l; sleep 0.3
-kill -0 $PID && echo "processo vivo"
+kill -0 $PID && echo "processo vivo" || { echo "o processo morreu"; cat "$OUT/log.txt"; exit 1; }
 kill $PID; wait $PID 2>/dev/null
 echo "--- log do app"; cat "$OUT/log.txt"
 cat "$HOME/.config/gatinho/settings.json"; echo
+# Falha se a janela não abriu ou o processo morreu.
+[ -n "$WIN" ] || { echo "janela não encontrada"; exit 1; }
