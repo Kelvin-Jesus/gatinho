@@ -2,7 +2,7 @@
 # Cria (uma vez) o certificado "Gatinho Dev" no chaveiro de login para assinar o app.
 # Com assinatura fixa, o macOS mantém a permissão de Acessibilidade entre recompilações;
 # a assinatura ad hoc muda a cada build e a permissão antiga deixa de valer.
-# O certificado é autoassinado e só vale nesta máquina.
+# O certificado é autoassinado, confiável só para assinar código e só nesta máquina.
 set -euo pipefail
 NAME="Gatinho Dev"
 if security find-certificate -c "$NAME" >/dev/null 2>&1; then
@@ -30,4 +30,7 @@ CFG
   -name "$NAME" -passout pass:gatinho -out "$TMP/id.p12"
 security import "$TMP/id.p12" -k "$HOME/Library/Keychains/login.keychain-db" \
   -P gatinho -T /usr/bin/codesign
+# Sem confiança explícita o macOS ignora a permissão de Acessibilidade dada ao app.
+# Vale só para assinar código, só neste usuário; o macOS pede a senha para aprovar.
+security add-trusted-cert -p codeSign -k "$HOME/Library/Keychains/login.keychain-db" "$TMP/cert.pem"
 echo "Certificado \"$NAME\" criado no chaveiro de login."

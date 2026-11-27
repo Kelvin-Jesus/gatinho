@@ -18,8 +18,22 @@ final class InputMonitor {
         self.onLockHotkey = onLockHotkey
     }
 
+    private var keyEvents = 0
+
+    /// Diagnóstico em ~/Library/Logs/Gatinho.log (sem conteúdo de teclas: só contagens e estado).
+    static func log(_ msg: String) {
+        let url = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Logs/Gatinho.log")
+        let line = "\(Date()) \(msg)\n"
+        if let h = try? FileHandle(forWritingTo: url) {
+            h.seekToEndOfFile(); h.write(Data(line.utf8)); try? h.close()
+        } else {
+            try? Data(line.utf8).write(to: url)
+        }
+    }
+
     func start() {
         trusted = AXIsProcessTrusted()
+        Self.log("início: pid \(getpid()), acessibilidade \(trusted)")
         installKeyMonitors()
         installMouseMonitors()
         // Quando a permissão é concedida com o app aberto, reinstala os monitores de teclado.
@@ -30,7 +44,9 @@ final class InputMonitor {
 
     private func checkTrust() {
         let now = AXIsProcessTrusted()
+        Self.logCount(keyEvents)
         guard now != trusted else { return }
+        Self.log("acessibilidade mudou para \(now)")
         trusted = now
         keyMonitors.forEach { NSEvent.removeMonitor($0) }
         keyMonitors.removeAll()
@@ -55,7 +71,15 @@ final class InputMonitor {
         }
     }
 
+    private static var lastLogged = -1
+    private static func logCount(_ n: Int) {
+        guard n != lastLogged else { return }
+        lastLogged = n
+        log("eventos de teclado recebidos até agora: \(n)")
+    }
+
     private func handleKey(_ e: NSEvent) {
+        keyEvents += 1
         switch e.type {
         case .keyDown:
             let f = e.modifierFlags.intersection(.deviceIndependentFlagsMask)
