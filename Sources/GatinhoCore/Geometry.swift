@@ -1,8 +1,12 @@
-import CoreGraphics
+import Foundation
+// No Mac, midX/width etc. de CGRect vêm do CoreGraphics; no Linux e no Windows, do próprio Foundation.
+#if canImport(CoreGraphics)
+@_exported import CoreGraphics
+#endif
 
 /// Todas as medidas do desenho, num espaço fixo de 330 x 300 pontos (y cresce para baixo).
-enum Geo {
-    static let size = CGSize(width: 330, height: 300)
+public enum Geo {
+    public static let size = CGSize(width: 330, height: 300)
     static let cx: CGFloat = 155
 
     static let headCenter = CGPoint(x: 155, y: 112)
@@ -21,7 +25,7 @@ enum Geo {
     static let mouseCenter = CGPoint(x: 274, y: 254)
     static var mouseGrip: CGPoint { CGPoint(x: mouseCenter.x - 2, y: mouseCenter.y - 9) }
 
-    static func hitsHead(_ p: CGPoint) -> Bool {
+    public static func hitsHead(_ p: CGPoint) -> Bool {
         let dx = (p.x - headCenter.x) / 68
         let dy = (p.y - (headCenter.y - 6)) / 58
         return dx * dx + dy * dy <= 1

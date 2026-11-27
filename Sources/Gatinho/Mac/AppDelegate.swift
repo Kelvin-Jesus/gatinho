@@ -1,5 +1,7 @@
+#if os(macOS)
 import AppKit
 import ApplicationServices
+import GatinhoCore
 import SwiftUI
 
 /// Item de menu que chama uma closure.
@@ -26,10 +28,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
     private let defaults = UserDefaults.standard
     private var locked = false
+    private var scale: CGFloat = 1
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         sim = CatSim(coat: Coat.find(defaults.string(forKey: "coat")))
-        sim.scale = defaults.object(forKey: "scale") == nil ? 1 : CGFloat(defaults.double(forKey: "scale"))
+        scale = defaults.object(forKey: "scale") == nil ? 1 : CGFloat(defaults.double(forKey: "scale"))
+        sim.screenScale = scale
         sim.showKeyLabels = defaults.object(forKey: "showKeys") as? Bool ?? true
 
         makePanel()
@@ -44,7 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // MARK: - Janela
 
     private func makePanel() {
-        let size = NSSize(width: Geo.size.width * sim.scale, height: Geo.size.height * sim.scale)
+        let size = NSSize(width: Geo.size.width * scale, height: Geo.size.height * scale)
         let origin: NSPoint
         if defaults.object(forKey: "originX") != nil {
             origin = NSPoint(x: defaults.double(forKey: "originX"), y: defaults.double(forKey: "originY"))
@@ -65,15 +69,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         panel.isMovable = true
         panel.alphaValue = defaults.object(forKey: "opacity") == nil ? 1 : CGFloat(defaults.double(forKey: "opacity"))
 
-        host = CatHostingView(rootView: CatRootView(sim: sim, scale: sim.scale))
+        host = CatHostingView(rootView: CatRootView(sim: sim, scale: scale))
         host.sizingOptions = []
         host.frame = NSRect(origin: .zero, size: size)
         host.sim = sim
+        host.scale = scale
         host.menuProvider = { [weak self] in self?.buildMenu() ?? NSMenu() }
         host.onMoved = { [weak self] in self?.windowMoved() }
         panel.contentView = host
         panel.orderFrontRegardless()
-        sim.windowFrame = panel.frame
+        sim.windowFrame = MacCoords.frame(panel.frame)
 
         NotificationCenter.default.addObserver(forName: NSWindow.didMoveNotification, object: panel, queue: .main) { [weak self] _ in
             self?.windowMoved()
@@ -81,13 +86,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func windowMoved() {
-        sim.windowFrame = panel.frame
+        sim.windowFrame = MacCoords.frame(panel.frame)
         defaults.set(Double(panel.frame.minX), forKey: "originX")
         defaults.set(Double(panel.frame.minY), forKey: "originY")
     }
 
     private func setScale(_ s: CGFloat) {
-        sim.scale = s
+        scale = s
+        sim.screenScale = s
+        host.scale = s
         defaults.set(Double(s), forKey: "scale")
         let size = NSSize(width: Geo.size.width * s, height: Geo.size.height * s)
         // Mantém o canto inferior direito no lugar
@@ -149,7 +156,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }))
         let sizes: [(String, CGFloat)] = [("Mini", 0.6), ("Pequeno", 0.8), ("Normal", 1.0), ("Grande", 1.3)]
         m.addItem(submenu("Tamanho", sizes.map { name, s in
-            ActionItem(name, checked: abs(sim.scale - s) < 0.01) { [weak self] in self?.setScale(s) }
+            ActionItem(name, checked: abs(scale - s) < 0.01) { [weak self] in self?.setScale(s) }
         }))
         let opacities: [CGFloat] = [1, 0.85, 0.7, 0.5]
         m.addItem(submenu("Opacidade", opacities.map { o in
@@ -179,3 +186,4 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 }
+#endif

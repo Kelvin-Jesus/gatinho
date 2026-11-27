@@ -1,31 +1,29 @@
-import SwiftUI
+import Foundation
 
 /// Cor RGB simples, para poder misturar (lerp) cores no desenho.
-struct RGB {
-    var r: Double, g: Double, b: Double
+public struct RGB {
+    public var r: Double, g: Double, b: Double
 
-    init(_ hex: UInt32) {
+    public init(_ hex: UInt32) {
         r = Double((hex >> 16) & 0xFF) / 255
         g = Double((hex >> 8) & 0xFF) / 255
         b = Double(hex & 0xFF) / 255
     }
 
-    init(r: Double, g: Double, b: Double) { self.r = r; self.g = g; self.b = b }
+    public init(r: Double, g: Double, b: Double) { self.r = r; self.g = g; self.b = b }
 
-    var color: Color { Color(.sRGB, red: r, green: g, blue: b, opacity: 1) }
-
-    func mix(_ o: RGB, _ t: Double) -> RGB {
+    public func mix(_ o: RGB, _ t: Double) -> RGB {
         let t = min(max(t, 0), 1)
         return RGB(r: r + (o.r - r) * t, g: g + (o.g - g) * t, b: b + (o.b - b) * t)
     }
 }
 
-enum CoatPattern { case solid, tuxedo, bicolor, tabby, siamese, calico }
+public enum CoatPattern { case solid, tuxedo, bicolor, tabby, siamese, calico }
 
 /// Pelagem: as cores e o padrão do gato.
-struct Coat {
-    let id: String
-    let name: String
+public struct Coat {
+    public let id: String
+    public let name: String
     let base: RGB       // pelo principal
     let shade: RGB      // contorno
     let accent: RGB     // branco do tuxedo, listras, pontas do siamês, mancha laranja
@@ -38,7 +36,7 @@ struct Coat {
     let whisker: RGB
     let pattern: CoatPattern
 
-    static let all: [Coat] = [
+    public static let all: [Coat] = [
         Coat(id: "tuxedo", name: "Tuxedo (preto e branco)",
              base: RGB(0x232327), shade: RGB(0x0F0F12), accent: RGB(0xF7F4EE), accent2: RGB(0xF7F4EE),
              innerEar: RGB(0xC97F8D), eye: RGB(0xF2C230), paw: RGB(0xF7F4EE),
@@ -77,7 +75,7 @@ struct Coat {
              eyeLine: RGB(0x2D333B), mouthLine: RGB(0x3A3A40), whisker: RGB(0xB9BBC0), pattern: .bicolor),
     ]
 
-    static func find(_ id: String?) -> Coat { all.first { $0.id == id } ?? all[0] }
+    public static func find(_ id: String?) -> Coat { all.first { $0.id == id } ?? all[0] }
 
     var tailColor: RGB {
         switch pattern {

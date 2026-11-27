@@ -1,27 +1,27 @@
-import AppKit
+import Foundation
 
 /// Mola amortecida 2D: toda posição animada persegue um alvo com ela.
-struct Spring2 {
-    var value: CGPoint
-    var velocity = CGVector.zero
+public struct Spring2 {
+    public var value: CGPoint
+    var velocity = CGPoint.zero
 
     mutating func step(to t: CGPoint, dt: CGFloat, k: CGFloat, zeta: CGFloat = 0.8) {
-        let c = 2 * sqrt(k) * zeta
-        velocity.dx += (k * (t.x - value.x) - c * velocity.dx) * dt
-        velocity.dy += (k * (t.y - value.y) - c * velocity.dy) * dt
-        value.x += velocity.dx * dt
-        value.y += velocity.dy * dt
+        let c = 2 * k.squareRoot() * zeta
+        velocity.x += (k * (t.x - value.x) - c * velocity.x) * dt
+        velocity.y += (k * (t.y - value.y) - c * velocity.y) * dt
+        value.x += velocity.x * dt
+        value.y += velocity.y * dt
     }
 
-    var speed: CGFloat { hypot(velocity.dx, velocity.dy) }
+    var speed: CGFloat { (velocity.x * velocity.x + velocity.y * velocity.y).squareRoot() }
 }
 
-struct Spring1 {
-    var value: CGFloat
+public struct Spring1 {
+    public var value: CGFloat
     var velocity: CGFloat = 0
 
     mutating func step(to t: CGFloat, dt: CGFloat, k: CGFloat, zeta: CGFloat = 1) {
-        let c = 2 * sqrt(k) * zeta
+        let c = 2 * k.squareRoot() * zeta
         velocity += (k * (t - value) - c * velocity) * dt
         value += velocity * dt
     }
@@ -36,30 +36,36 @@ struct Particle {
     let drift: CGFloat
 }
 
-enum Mood { case awake, daydream, sleeping }
+public enum Mood { case awake, daydream, sleeping }
 
 /// Estado do gato. Os eventos de teclado/mouse mudam os alvos; `step` anima tudo a cada quadro.
 /// Teclas só ficam em memória enquanto estão pressionadas: nada é gravado.
-final class CatSim {
-    var coat: Coat
-    var scale: CGFloat = 1
-    var showKeyLabels = true
-    var windowFrame: NSRect = .zero
-    var interactive = true
+///
+/// Coordenadas de tela: y para baixo, na mesma unidade de `windowFrame` e `pointer`
+/// (pontos no Mac, pixels no Windows/Linux). `screenScale` converte pontos do desenho para elas.
+public final class CatSim {
+    public var coat: Coat
+    public var showKeyLabels = true
+    public var labelStyle: LabelStyle = .mac
 
-    var daydreamAfter: TimeInterval = 15
-    var sleepAfter: TimeInterval = 40
+    public var windowFrame: CGRect = .zero
+    public var pointer: CGPoint = .zero
+    public var screenScale: CGFloat = 1
+
+    public var daydreamAfter: TimeInterval = 15
+    public var sleepAfter: TimeInterval = 40
 
     // Entrada
     private var heldKeys: [UInt16: (slot: Int, paw: Paw, at: TimeInterval, seen: TimeInterval)] = [:]
     private var lastKey: [Paw: (slot: Int, at: TimeInterval)] = [:]
+    private var scheduledReleases: [(code: UInt16, at: TimeInterval)] = []
     private(set) var keyGlow = [CGFloat](repeating: 0, count: KeyLayout.slots.count)
     private(set) var mouseButtons: Set<Int> = []
     private var lastMouseActivity: TimeInterval = -100
     private var lastActivity: TimeInterval
-    private var lastMouseLoc: CGPoint
+    private var lastPointer: CGPoint?
     private(set) var wheelPhase: CGFloat = 0
-    private(set) var petting = false
+    public private(set) var petting = false
     private var petPoint: CGPoint = .zero
 
     // Animação
@@ -88,21 +94,20 @@ final class CatSim {
     private var lastZ: TimeInterval = 0
     private var lastHeart: TimeInterval = 0
 
-    private(set) var time: TimeInterval = 0
+    public private(set) var time: TimeInterval = 0
     private var lastTime: TimeInterval = 0
+    public private(set) var mood: Mood = .awake
 
     /// Fases acumuladas quadro a quadro. Nunca calcular `sin(tempoAbsoluto * velocidade)`
     /// com velocidade variável: com o tempo na casa de 10^8 s, qualquer mudança de
     /// velocidade faz a fase saltar e a animação "enlouquece".
-    private(set) var tailPhase: Double = 0
-    private(set) var breathPhase: Double = 0
-    private(set) var mood: Mood = .awake
+    public private(set) var tailPhase: Double = 0
+    public private(set) var breathPhase: Double = 0
 
-    init(coat: Coat) {
+    public init(coat: Coat) {
         self.coat = coat
         let now = Date().timeIntervalSinceReferenceDate
         lastActivity = now
-        lastMouseLoc = NSEvent.mouseLocation
         nextBlink = now + 2
         nextEarTwitch = now + 6
     }
@@ -111,7 +116,7 @@ final class CatSim {
 
     // MARK: - Eventos
 
-    func keyDown(code: UInt16, label: String, isRepeat: Bool) {
+    public func keyDown(code: UInt16, label: String, isRepeat: Bool) {
         let t = now
         markActivity(t)
         let slot = KeyLayout.slotIndex(for: code)
@@ -133,22 +138,26 @@ final class CatSim {
         }
     }
 
-    func keyUp(code: UInt16) {
+    public func keyUp(code: UInt16) {
         if let h = heldKeys.removeValue(forKey: code) { lastKey[h.paw] = (h.slot, now) }
     }
 
-    /// Modificadores (⇧ ⌘ ⌥ ⌃) chegam como flagsChanged: alterna entre apertado e solto.
-    func modifierChanged(code: UInt16) {
+    public func isHeld(_ code: UInt16) -> Bool { heldKeys[code] != nil }
+
+    /// Modificadores no macOS chegam como flagsChanged, sem "solto" explícito: alterna.
+    public func modifierChanged(code: UInt16) {
+        let label = KeyLabels.label(code: code, style: labelStyle)
         if code == 57 { // Caps Lock: trata como um toque rápido
-            keyDown(code: code, label: KeyLabels.label(code: code), isRepeat: false)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in self?.keyUp(code: code) }
+            keyDown(code: code, label: label, isRepeat: false)
+            scheduledReleases.append((code, now + 0.15))
             return
         }
         if heldKeys[code] != nil { keyUp(code: code) }
-        else { keyDown(code: code, label: KeyLabels.label(code: code), isRepeat: false) }
+        else { keyDown(code: code, label: label, isRepeat: false) }
     }
 
-    func mouseButton(_ b: Int, down: Bool) {
+    /// 0 = esquerdo, 1 = direito, 2 = meio.
+    public func mouseButton(_ b: Int, down: Bool) {
         let t = now
         if down { mouseButtons.insert(b) } else { mouseButtons.remove(b) }
         lastMouseActivity = t
@@ -156,16 +165,16 @@ final class CatSim {
         if down { rightPress.velocity += 4 }
     }
 
-    func scroll(_ dy: CGFloat) {
+    public func scroll(_ dy: CGFloat) {
         let t = now
         wheelPhase += dy
         lastMouseActivity = t
         markActivity(t)
     }
 
-    func beginPet(at p: CGPoint) { petting = true; petPoint = p; markActivity(now) }
-    func movePet(to p: CGPoint) { petPoint = p; markActivity(now) }
-    func endPet() { petting = false }
+    public func beginPet(at p: CGPoint) { petting = true; petPoint = p; markActivity(now) }
+    public func movePet(to p: CGPoint) { petPoint = p; markActivity(now) }
+    public func endPet() { petting = false }
 
     private func markActivity(_ t: TimeInterval) {
         if mood == .sleeping || sleep.value > 0.45 {
@@ -180,13 +189,16 @@ final class CatSim {
 
     // MARK: - Quadro
 
-    func step(to t: TimeInterval) {
+    public func step(to t: TimeInterval) {
         if lastTime == 0 { lastTime = t }
         let dt = CGFloat(min(max(t - lastTime, 0), 0.05))
         lastTime = t
         time = t
 
-        pollMouse(t)
+        for r in scheduledReleases where r.at <= t { keyUp(code: r.code) }
+        scheduledReleases.removeAll { $0.at <= t }
+
+        pollPointer(t)
         dropStaleKeys(t)
 
         let idle = t - lastActivity
@@ -229,15 +241,17 @@ final class CatSim {
         }
     }
 
-    private func pollMouse(_ t: TimeInterval) {
-        let m = NSEvent.mouseLocation
-        let dx = m.x - lastMouseLoc.x, dy = m.y - lastMouseLoc.y
-        lastMouseLoc = m
+    private func pollPointer(_ t: TimeInterval) {
+        let m = pointer
+        let last = lastPointer ?? m
+        lastPointer = m
+        let dx = m.x - last.x, dy = m.y - last.y
+        let units = 1 / max(screenScale, 0.01)
         if abs(dx) + abs(dy) > 0.5, !petting {
             lastMouseActivity = t
             markActivity(t)
         }
-        jiggleTarget = CGPoint(x: clamp(dx * 0.35, -5, 5), y: clamp(-dy * 0.35, -4, 4))
+        jiggleTarget = CGPoint(x: clamp(dx * units * 0.35, -5, 5), y: clamp(dy * units * 0.35, -4, 4))
     }
 
     private func dropStaleKeys(_ t: TimeInterval) {
@@ -275,15 +289,15 @@ final class CatSim {
             let side = clamp((petPoint.x - Geo.headCenter.x) / 60, -1, 1)
             return (.zero, 1, side * 0.17)
         }
-        let s = scale
+        let s = max(screenScale, 0.01)
         let mid = CGPoint(x: (Geo.eyeL.x + Geo.eyeR.x) / 2, y: Geo.eyeL.y)
-        let eye = CGPoint(x: windowFrame.minX + mid.x * s, y: windowFrame.maxY - mid.y * s)
-        let m = NSEvent.mouseLocation
-        let dx = m.x - eye.x, dy = -(m.y - eye.y)
-        let d = hypot(dx, dy)
+        let eye = CGPoint(x: windowFrame.minX + mid.x * s, y: windowFrame.minY + mid.y * s)
+        // Distâncias em pontos do desenho, para valerem igual em qualquer escala/DPI.
+        let dx = (pointer.x - eye.x) / s, dy = (pointer.y - eye.y) / s
+        let d = (dx * dx + dy * dy).squareRoot()
         let mag = min(1, d / 220) * 4.5
         let dir = d > 0.001 ? CGPoint(x: dx / d, y: dy / d * 0.8) : .zero
-        return (dir * mag, d < 170 * s + 40 ? 1 : 0, clamp(dx / 2500, -0.07, 0.07))
+        return (dir * mag, d < 210 ? 1 : 0, clamp(dx / 2500, -0.07, 0.07))
     }
 
     private func updateBlinkAndTwitch(_ t: TimeInterval) {
@@ -324,9 +338,9 @@ final class CatSim {
     // MARK: - Valores derivados para o desenho
 
     /// Radianos por segundo do balanço do rabo: mais lento sonhando.
-    var tailSpeed: Double { 1.7 - 1.0 * Double(dream.value) }
+    public var tailSpeed: Double { 1.7 - 1.0 * Double(dream.value) }
     /// Segundos por respiração: mais lenta dormindo.
-    var breathPeriod: Double { 3.2 + 1.6 * Double(sleep.value) }
+    public var breathPeriod: Double { 3.2 + 1.6 * Double(sleep.value) }
 
     /// 1 = olho aberto, 0 = fechado. Junta piscada e sono.
     var eyeOpenness: CGFloat {

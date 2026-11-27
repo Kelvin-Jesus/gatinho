@@ -1,5 +1,7 @@
+#if os(macOS)
 import AppKit
 import ApplicationServices
+import GatinhoCore
 
 /// Escuta teclado e mouse do sistema todo e repassa para o CatSim.
 /// Teclado global exige permissão de Acessibilidade; mouse não exige.
@@ -60,7 +62,7 @@ final class InputMonitor {
             if e.keyCode == 37, f.contains(.control), f.contains(.option), !e.isARepeat { // ⌃⌥L
                 onLockHotkey()
             }
-            sim.keyDown(code: e.keyCode, label: KeyLabels.label(for: e), isRepeat: e.isARepeat)
+            sim.keyDown(code: e.keyCode, label: MacKeyLabel.label(for: e), isRepeat: e.isARepeat)
         case .keyUp:
             sim.keyUp(code: e.keyCode)
         case .flagsChanged:
@@ -86,3 +88,15 @@ final class InputMonitor {
         }
     }
 }
+
+enum MacKeyLabel {
+    /// Rótulo do keycap: símbolo da tecla especial ou o caractere do layout atual.
+    static func label(for e: NSEvent) -> String {
+        let special = KeyLabels.label(code: e.keyCode)
+        if !special.isEmpty, special.count > 1 || "⏎⌫⌦␣⇥⇧⌘⌥⌃⇪←→↑↓".contains(special) { return special }
+        guard let chars = e.charactersIgnoringModifiers, let first = chars.first else { return special }
+        if first.unicodeScalars.allSatisfy({ CharacterSet.controlCharacters.contains($0) }) { return special }
+        return String(first).uppercased()
+    }
+}
+#endif
