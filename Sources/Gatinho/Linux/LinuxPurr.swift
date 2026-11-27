@@ -1,5 +1,6 @@
 #if os(Linux)
 import Foundation
+import GatinhoCore
 
 /// Ronronar no Linux: toca um .wav temporário com o primeiro tocador que existir
 /// (pw-play do PipeWire, paplay do PulseAudio ou aplay do ALSA). Sem nenhum, fica mudo.
