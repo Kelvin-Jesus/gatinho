@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Cor RGB simples, para poder misturar (lerp) cores no desenho.
 public struct RGB {

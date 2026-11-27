@@ -6,7 +6,14 @@ let package = Package(
     platforms: [.macOS(.v14)],
     targets: [
         // Lógica, desenho e rasterizador por software: só Foundation, roda nos 3 sistemas.
-        .target(name: "GatinhoCore", path: "Sources/GatinhoCore"),
+        // No WebAssembly (o gato do site) o núcleo dispensa o Foundation: GATINHO_WEB troca
+        // CGPoint/CGRect/Date por um shim e deixa de fora o que mexe com arquivos.
+        .target(name: "GatinhoCore", path: "Sources/GatinhoCore",
+                swiftSettings: [.define("GATINHO_WEB", .when(platforms: [.wasi]))]),
+
+        // O gato do site (WebAssembly). Fora do wasm compila vazio.
+        .executableTarget(name: "GatinhoWeb", dependencies: ["GatinhoCore"], path: "Sources/GatinhoWeb",
+                          swiftSettings: [.define("GATINHO_WEB", .when(platforms: [.wasi]))]),
 
         // Xlib + XShape + XInput2 (só Linux). Precisa de libx11-dev, libxext-dev e libxi-dev.
         .systemLibrary(name: "CX11", path: "Sources/CX11", pkgConfig: "x11",

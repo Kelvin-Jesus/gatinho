@@ -1,9 +1,11 @@
+// Fora do site: depende de Foundation (arquivos, Data, URL).
+#if !GATINHO_WEB
 import Foundation
 
 /// Grava cenas curtas em quadros RGBA crus (para virar GIF com ffmpeg).
 /// O tempo é simulado: cada quadro avança 1/fps, então o resultado não depende da máquina.
 public enum Recorder {
-    public static let scenes = ["digitando", "carinho", "soneca"]
+    public static let scenes = ["digitando", "carinho", "soneca", "coruja", "caca", "bolinha", "cochilo"]
 
     private struct Cue { let at: Double; let run: (CatSim) -> Void }
 
@@ -51,13 +53,40 @@ public enum Recorder {
                 Cue(at: 8.6) { $0.keyDown(code: 0, label: "A", isRepeat: false) },
                 Cue(at: 8.75) { $0.keyUp(code: 0) },
             ], still)
+        case "coruja":
+            // Parado um tempo; o cursor se mexe longe e ele faz cara de coruja.
+            return ("laranja", 8, { _ in }, [], { t in
+                t < 4.5 ? CGPoint(x: 520, y: 120) : CGPoint(x: 520 - 60 * min(t - 4.5, 0.6), y: 120 + 20 * min(t - 4.5, 0.6))
+            })
+        case "caca":
+            // O cursor chega perto, para; ele abaixa, mexe o rabo e dá a patada. Depois de novo, do outro lado.
+            return ("laranja", 9, { _ in }, [], { t in
+                func go(_ a: CGPoint, _ b: CGPoint, _ t0: Double, _ t1: Double) -> CGPoint {
+                    let k = min(max((t - t0) / (t1 - t0), 0), 1)
+                    let e = k * k * (3 - 2 * k)
+                    return CGPoint(x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e)
+                }
+                let p0 = CGPoint(x: 560, y: 60), p1 = CGPoint(x: 300, y: 120), p2 = CGPoint(x: 30, y: 150)
+                return t < 4.5 ? go(p0, p1, 0.4, 1.4) : go(p1, p2, 4.5, 5.6)
+            })
+        case "bolinha":
+            return ("laranja", 15, { s in s.daydreamAfter = 60; s.sleepAfter = 90 }, [
+                Cue(at: 13.4) { $0.keyDown(code: 0, label: "A", isRepeat: false) },
+                Cue(at: 13.55) { $0.keyUp(code: 0) },
+            ], still)
+        case "cochilo":
+            // Lambe a pata, dorme com a pata nos olhos, acorda: sacode, espreguiça e boceja.
+            return ("laranja", 15, { s in s.daydreamAfter = 0.5; s.sleepAfter = 6.5; s.forceCoverEyes = true }, [
+                Cue(at: 11.5) { $0.keyDown(code: 0, label: "A", isRepeat: false) },
+                Cue(at: 11.6) { $0.keyUp(code: 0) },
+            ], still)
         default:
             return nil
         }
     }
 
     /// Grava a cena em `path` (RGBA cru, quadro após quadro) e devolve largura e altura.
-    public static func record(_ name: String, to path: String, scale: CGFloat = 1.5, fps: Double = 30) -> Bool {
+    public static func record(_ name: String, to path: String, scale: CGFloat = 1.5, background: RGB = RGB(0xF7EEDF), fps: Double = 30) -> Bool {
         guard let sc = scene(name) else { print("cena desconhecida: \(name)"); return false }
         var t = Date().timeIntervalSinceReferenceDate
         let sim = CatSim(coat: Coat.find(sc.coat))
@@ -87,7 +116,7 @@ public enum Recorder {
                 sim.pointer = sc.pointer(local)
                 sim.step(to: t)
             }
-            canvas.fillBackground(RGB(0xF7EEDF))
+            canvas.fillBackground(background)
             CatRenderer.draw(sim, SoftPainter(canvas), scale: scale)
             out.write(Data(canvas.rgbaStraight()))
         }
@@ -95,3 +124,4 @@ public enum Recorder {
         return true
     }
 }
+#endif

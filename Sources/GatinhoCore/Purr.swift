@@ -1,43 +1,21 @@
+// Fora do site: depende de Foundation (arquivos, Data, URL).
+#if !GATINHO_WEB
 import Foundation
 
-/// Som do ronronar, sintetizado aqui mesmo (nenhum arquivo de áudio no projeto).
-///
-/// Um ronronar de verdade é uma sequência de "batidas" de ~25 por segundo, mais
-/// forte quando o gato solta o ar e mais fraca quando puxa. Cada batida aqui é um
-/// pacote de ruído grave com um envelope curto; o ciclo expira + inspira vira um
-/// laço de ~2 s que fecha sem emenda, porque começa e termina em silêncio.
+/// Som do ronronar: um gato de verdade gravado (Pixabay, "Real cat purring sound",
+/// de feedthestraycats, licença de conteúdo do Pixabay). Recortamos 8 s do meio da
+/// gravação, emendamos o fim no começo com fade cruzado (o laço não tem costura),
+/// tiramos o ronco abaixo de 30 Hz e normalizamos o volume. Fica embutido no binário
+/// (PurrSample.swift), então o app continua sendo um arquivo só.
 public enum Purr {
-    public static let sampleRate = 22_050
+    public static let sampleRate = 16_000
 
-    /// Um ciclo completo (expira e inspira) em PCM 16 bits mono.
+    /// O laço completo em PCM 16 bits mono.
     public static func loop() -> [Int16] {
-        var rng = SplitMix(seed: 0x6A7_1A0)
-        var out: [Int16] = []
-        // Expira: 28 batidas a 25 Hz, forte. Inspira: 20 batidas a 22 Hz, mais fraca.
-        let phases: [(beats: Int, hz: Double, gain: Double)] = [(28, 25, 1.0), (20, 22, 0.55)]
-        var low = 0.0, band = 0.0
-        for phase in phases {
-            let beatLen = Int(Double(sampleRate) / phase.hz)
-            let total = beatLen * phase.beats
-            for i in 0..<total {
-                let beatPos = Double(i % beatLen) / Double(beatLen)
-                let cyclePos = Double(i) / Double(total)
-                // Envelope da batida: subida rápida, queda suave.
-                let beat = pow(sin(.pi * min(1, beatPos * 1.6)), 2)
-                // Envelope do fôlego: entra e sai suave, silêncio nas pontas.
-                let breath = pow(sin(.pi * cyclePos), 0.6)
-                // Ruído filtrado: dois polos simples dão o "rrr" grave e aveludado.
-                let noise = rng.nextSigned()
-                low += 0.09 * (noise - low)
-                band += 0.25 * (low - band)
-                let body = sin(2 * .pi * 110 * Double(i) / Double(sampleRate)) * 0.15
-                let s = (band * 2.6 + body * beat) * beat * breath * phase.gain
-                out.append(Int16(max(-1, min(1, s * 0.55)) * 32_767))
-            }
-            // Pausa curta entre expirar e inspirar.
-            out.append(contentsOf: repeatElement(0, count: sampleRate / 20))
+        guard let data = Data(base64Encoded: recording) else { return [] }
+        return data.withUnsafeBytes { raw in
+            (0..<data.count / 2).map { Int16(littleEndian: raw.loadUnaligned(fromByteOffset: $0 * 2, as: Int16.self)) }
         }
-        return out
     }
 
     /// Arquivo WAV com o laço repetido até cobrir `seconds` (pelo menos um ciclo).
@@ -58,17 +36,4 @@ public enum Purr {
     }
 }
 
-/// Gerador pseudoaleatório fixo, para o som sair igual em toda máquina.
-struct SplitMix {
-    var state: UInt64
-    init(seed: UInt64) { state = seed }
-    mutating func next() -> UInt64 {
-        state &+= 0x9E37_79B9_7F4A_7C15
-        var z = state
-        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
-        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
-        return z ^ (z >> 31)
-    }
-    /// Valor entre -1 e 1.
-    mutating func nextSigned() -> Double { Double(next() >> 11) / Double(1 << 52) - 1 }
-}
+#endif

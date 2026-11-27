@@ -1,3 +1,5 @@
+// Fora do site: depende de Foundation (arquivos, Data, URL).
+#if !GATINHO_WEB
 import Foundation
 
 /// Preferências salvas em JSON (Windows e Linux; o Mac usa UserDefaults).
@@ -27,3 +29,4 @@ public struct Settings: Codable {
         if let data = try? JSONEncoder().encode(self) { try? data.write(to: url) }
     }
 }
+#endif

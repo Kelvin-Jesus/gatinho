@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 // No Mac, midX/width etc. de CGRect vêm do CoreGraphics; no Linux e no Windows, do próprio Foundation.
 #if canImport(CoreGraphics)
 @_exported import CoreGraphics

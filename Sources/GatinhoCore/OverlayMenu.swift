@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Menu desenhado dentro da própria janela do gato (Linux não tem um menu nativo comum a todos os desktops).
 public final class OverlayMenu {

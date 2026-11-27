@@ -88,14 +88,14 @@ O gato precisa ver suas teclas pra digitar junto, então vale dizer o que ele fa
 | Linux | X11, transparente ou recortada com XShape | XInput2, ou `/dev/input` no Wayland |
 | Windows | `UpdateLayeredWindow` | ganchos `WH_KEYBOARD_LL` e `WH_MOUSE_LL` |
 
-No Linux e no Windows o desenho é feito por um rasterizador próprio, sem biblioteca gráfica nenhuma. Um quadro leva uns 2 ms. O ronronar também é gerado no código, sem arquivo de áudio: batidas de ruído grave a uns 25 por segundo, mais fortes quando ele solta o ar. No Mac toca pelo AVFoundation, no Windows pelo `PlaySound` e no Linux pelo `pw-play`, `paplay` ou `aplay`, o que tiver.
+No Linux e no Windows o desenho é feito por um rasterizador próprio, sem biblioteca gráfica nenhuma. Um quadro leva uns 2 ms. O ronronar é um gato de verdade: 8 s de uma gravação do Pixabay ("Real cat purring sound", de feedthestraycats, licença de conteúdo do Pixabay), em laço sem costura e embutidos no executável, que continua sendo um arquivo só. No Mac toca pelo AVFoundation, no Windows pelo `PlaySound` e no Linux pelo `pw-play`, `paplay` ou `aplay`, o que tiver.
 
 Alguns comandos ajudam a conferir as coisas sem abrir janela:
 
 ```bash
 Gatinho --snapshot estados.png     # a grade de pelagens aí de cima
 Gatinho --record digitando x.rgba  # quadros crus de uma cena (digitando, carinho, soneca)
-Gatinho --purr ronronar.wav        # grava 6 s do ronronar
+Gatinho --purr ronronar.wav        # grava o laço do ronronar (8 s)
 Gatinho --check-smooth             # falha se o rabo ou a respiração derem pulo
 Gatinho --benchmark                # quanto tempo leva um quadro
 ```

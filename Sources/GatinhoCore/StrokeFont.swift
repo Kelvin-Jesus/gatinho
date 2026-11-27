@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Fonte vetorial de traços (grade 4 x 6), usada pelo SoftPainter no Windows e no Linux.
 /// Cobre A–Z, 0–9, a pontuação do teclado e os símbolos das teclas especiais.
@@ -74,8 +78,24 @@ enum StrokeFont {
     }()
 
     static func normalize(_ s: String) -> String {
+        #if GATINHO_WEB
+        // Sem Foundation: tira os acentos do português/espanhol/francês à mão.
+        String(s.uppercased().map { accents[$0] ?? $0 })
+        #else
         s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil).uppercased()
+        #endif
     }
+
+    #if GATINHO_WEB
+    private static let accents: [Character: Character] = {
+        var m: [Character: Character] = [:]
+        for (base, list) in [("A", "ÁÀÂÃÄÅ"), ("E", "ÉÈÊË"), ("I", "ÍÌÎÏ"), ("O", "ÓÒÔÕÖ"),
+                             ("U", "ÚÙÛÜ"), ("C", "Ç"), ("N", "Ñ"), ("Y", "ÝŸ")] {
+            for c in list { m[c] = Character(base) }
+        }
+        return m
+    }()
+    #endif
 
     /// Caminho do texto centralizado em `center`; altura das maiúsculas ≈ 0,7 × size.
     static func path(_ text: String, center: CGPoint, size: CGFloat) -> Path2D {

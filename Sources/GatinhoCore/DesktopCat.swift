@@ -1,3 +1,5 @@
+// Fora do site: depende de Foundation (arquivos, Data, URL).
+#if !GATINHO_WEB
 import Foundation
 
 /// Parte comum do app no Windows e no Linux: preferências, escala, quadro em software e menu.
@@ -182,3 +184,4 @@ public final class DesktopCat {
         return ctrl && alt
     }
 }
+#endif

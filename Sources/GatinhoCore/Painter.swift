@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Caminho vetorial independente de plataforma (y para baixo).
 public struct Path2D {

@@ -1,3 +1,5 @@
+// Fora do site: depende de Foundation (arquivos, Data, URL).
+#if !GATINHO_WEB
 import Foundation
 
 /// Ferramentas de verificação que rodam em qualquer sistema, sem janela.
@@ -100,6 +102,21 @@ public enum SelfTest {
         }
     }
 
+    /// Um PNG por pelagem (o mesmo estado da grade), todos do mesmo tamanho, para o site.
+    public static func stills(to dir: String, scale: CGFloat = 3, background: RGB = RGB(0xF7EEDF)) -> Bool {
+        try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+        let canvas = SoftCanvas(width: Int(Geo.size.width * scale), height: Int(Geo.size.height * scale))
+        for sim in states() {
+            canvas.fillBackground(background)
+            CatRenderer.draw(sim, SoftPainter(canvas), scale: scale)
+            let png = PNG.encode(rgba: canvas.rgbaStraight(), width: canvas.width, height: canvas.height)
+            let url = URL(fileURLWithPath: dir).appendingPathComponent("\(sim.coat.id).png")
+            guard (try? Data(png).write(to: url)) != nil else { print("falha ao gravar \(url.path)"); return false }
+        }
+        print("ok: \(states().count) pelagens em \(dir)")
+        return true
+    }
+
     /// Quanto tempo leva um quadro desenhado por software (para checar se aguenta 60 fps).
     public static func benchmark(scale: CGFloat = 2) {
         let sim = cell("laranja") { s in s.keyDown(code: 0, label: "A", isRepeat: false) }
@@ -114,3 +131,4 @@ public enum SelfTest {
         print(String(format: "quadro em software (escala %.1f): %.2f ms", Double(scale), ms))
     }
 }
+#endif

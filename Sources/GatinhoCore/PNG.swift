@@ -1,3 +1,5 @@
+// Fora do site: depende de Foundation (arquivos, Data, URL).
+#if !GATINHO_WEB
 import Foundation
 
 /// Codificador PNG mínimo (deflate sem compressão), para snapshots sem dependências.
@@ -50,3 +52,4 @@ public enum PNG {
             + chunk("IHDR", ihdr) + chunk("IDAT", z) + chunk("IEND", [])
     }
 }
+#endif

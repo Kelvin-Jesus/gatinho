@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Desenha o gato inteiro em qualquer `Painter`, a partir do estado do CatSim.
 public enum CatRenderer {
@@ -16,7 +20,7 @@ public enum CatRenderer {
         // Respiração: o corpo estica a partir da base; ombros e cabeça acompanham.
         let b = CGFloat(sin(sim.breathPhase))
         let amp: CGFloat = 0.012 + 0.016 * sim.sleep.value
-        let bodyScaleY = 1 + b * amp + 0.035 * sim.dream.value - 0.03 * sim.sleep.value
+        let bodyScaleY = 1 + b * amp + 0.035 * sim.dream.value - 0.03 * sim.sleep.value - 0.05 * sim.crouch.value
         let rise = (Geo.bodyBottom - Geo.shoulderL.y) * (bodyScaleY - 1)
 
         func bodyTransform() {
@@ -32,13 +36,18 @@ public enum CatRenderer {
 
         drawKeyboard(sim, g)
         drawMouse(sim, g)
+        drawBall(sim, g)
 
         // Braços: contorno, depois o corpo de novo por cima (só acima do teclado), depois o preenchimento.
         let shL = Geo.shoulderL - CGPoint(x: 0, y: rise)
         let shR = Geo.shoulderR - CGPoint(x: 0, y: rise)
         let pL = pawPosition(sim.leftPaw, press: sim.leftPress.value)
         let pR = pawPosition(sim.rightPaw, press: sim.rightPress.value)
-        for (s, p) in [(shL, pL), (shR, pR)] {
+        // Pata erguida (lambendo, cobrindo os olhos, patada pra cima) vai por cima da cabeça.
+        let raisedL = pL.y < 170, raisedR = pR.y < 170
+        let low = [(shL, pL, raisedL), (shR, pR, raisedR)].filter { !$0.2 }.map { ($0.0, $0.1) }
+        let high = [(shL, pL, raisedL), (shR, pR, raisedR)].filter { $0.2 }.map { ($0.0, $0.1) }
+        for (s, p) in low {
             g.stroke(armPath(s, p), .color(c.shade), StrokeStyle2(22.5, cap: .round))
         }
         g.save()
@@ -46,17 +55,17 @@ public enum CatRenderer {
         bodyTransform()
         drawBody(c, g)
         g.restore()
-        for (s, p) in [(shL, pL), (shR, pR)] {
+        for (s, p) in low {
             g.stroke(armPath(s, p), .color(c.base), StrokeStyle2(19.5, cap: .round))
         }
-        drawPaw(at: pL, press: sim.leftPress.value, coat: c, g)
-        drawPaw(at: pR, press: sim.rightPress.value, coat: c, g)
+        if !raisedL { drawPaw(at: pL, press: sim.leftPress.value, coat: c, g) }
+        if !raisedR { drawPaw(at: pR, press: sim.rightPress.value, coat: c, g) }
 
         // Cabeça
         g.save()
         // Ronronar: a cabeça vibra de leve, fino demais pra parecer tremedeira.
         let purrShake = CGFloat(sin(sim.purrPhase)) * 0.45 * sim.purr.value
-        g.translate(purrShake * 0.4, sim.headLift.value - rise * 1.1 + purrShake)
+        g.translate(purrShake * 0.4, sim.headLift.value - rise * 1.1 + purrShake + sim.owlBob)
         g.translate(Geo.neck.x, Geo.neck.y)
         g.rotate(sim.headTilt.value + sim.shakeAngle)
         g.translate(-Geo.neck.x, -Geo.neck.y)
@@ -64,6 +73,13 @@ public enum CatRenderer {
         drawHead(c, g)
         drawFace(sim, g, breath: b)
         g.restore()
+
+        for (s, p) in high {
+            g.stroke(armPath(s, p), .color(c.shade), StrokeStyle2(22.5, cap: .round))
+            g.stroke(armPath(s, p), .color(c.base), StrokeStyle2(19.5, cap: .round))
+        }
+        if raisedL { drawPaw(at: pL, press: sim.leftPress.value, coat: c, g) }
+        if raisedR { drawPaw(at: pR, press: sim.rightPress.value, coat: c, g) }
 
         drawParticles(sim, g)
     }
@@ -235,6 +251,40 @@ public enum CatRenderer {
         g.stroke(shell, .color(ink), StrokeStyle2(2))
     }
 
+    static let yarn = RGB(0xE5707E)
+    static let yarnDark = RGB(0xB94A5A)
+
+    private static func drawBall(_ sim: CatSim, _ g: Painter) {
+        guard let b = sim.ball else { return }
+        let r = YarnBall.radius
+        let ctr = CGPoint(x: b.x, y: YarnBall.y)
+        // Fio solto que fica pra trás quando ela rola.
+        let back: CGFloat = b.vx >= 0 ? -1 : 1
+        let thread = Path2D { p in
+            p.move(to: ctr + CGPoint(x: back * r * 0.6, y: r * 0.7))
+            p.addQuadCurve(to: ctr + CGPoint(x: back * (r + 12), y: r * 0.9),
+                           control: ctr + CGPoint(x: back * (r + 4), y: r * 1.6))
+        }
+        g.fill(ellipse(ctr + CGPoint(x: 0, y: r - 1), r * 2.2, 4), .color(RGB(0x000000), 0.12))
+        g.stroke(thread, .color(yarnDark), StrokeStyle2(1.4, cap: .round))
+        let disc = ellipse(ctr, r * 2, r * 2)
+        g.fill(disc, .color(yarn))
+        g.save()
+        g.clip(disc)
+        g.translate(ctr.x, ctr.y)
+        g.rotate(b.spin)
+        let wraps = Path2D { p in
+            for k in [-0.55, 0.0, 0.55] as [CGFloat] {
+                p.move(to: CGPoint(x: -r, y: k * r - 3))
+                p.addQuadCurve(to: CGPoint(x: r, y: k * r + 3), control: CGPoint(x: 0, y: k * r - 6))
+            }
+            p.move(to: CGPoint(x: -r * 0.3, y: -r)); p.addQuadCurve(to: CGPoint(x: -r * 0.1, y: r), control: CGPoint(x: r * 0.5, y: 0))
+        }
+        g.stroke(wraps, .color(yarnDark, 0.8), StrokeStyle2(1.1, cap: .round))
+        g.restore()
+        g.stroke(disc, .color(yarnDark), StrokeStyle2(1.4))
+    }
+
     private static func earPath(left: Bool, inner: Bool) -> Path2D {
         let pts: [CGPoint] = inner
             ? [CGPoint(x: 109, y: 90), CGPoint(x: 115, y: 60), CGPoint(x: 135, y: 77)]
@@ -249,7 +299,8 @@ public enum CatRenderer {
             g.save()
             let pivot = CGPoint(x: left ? 124 : 2 * Geo.cx - 124, y: 88)
             // No carinho as orelhas abaixam para fora; de vez em quando uma dá um tremelique.
-            let flatten = sim.pet.value * 0.32 + sim.sleep.value * 0.12
+            // Coruja: orelhas abertas para os lados, achatadas.
+            let flatten = sim.pet.value * 0.32 + sim.sleep.value * 0.12 + sim.owl.value * 0.5
             let angle = (left ? -flatten : flatten) + sim.earTwitchAngle(left: left) * (left ? -1 : 1)
             g.translate(pivot.x, pivot.y)
             g.rotate(angle)
@@ -349,6 +400,22 @@ public enum CatRenderer {
         }
         g.stroke(mouth, .color(c.mouthLine), StrokeStyle2(1.6, cap: .round))
 
+        // Bocejo da espreguiçada: a boca abre num "o" com a língua no fundo.
+        if sim.yawn.value > 0.05 {
+            let y = sim.yawn.value
+            let r = rect(center: CGPoint(x: 155, y: 143 + 3 * y), w: 6 + 9 * y, h: 3 + 13 * y)
+            g.fill(.ellipse(r), .color(RGB(0x5A2A33)))
+            g.fill(ellipse(CGPoint(x: 155, y: r.maxY - 3 * y), 4 + 6 * y, 3 + 3 * y), .color(RGB(0xF28C9C)))
+            g.stroke(.ellipse(r), .color(c.mouthLine), StrokeStyle2(1.4))
+        }
+        // Lambendo a pata: a pontinha da língua aparece no ritmo da lambida.
+        if sim.lick.value > 0.3 {
+            let k = CGFloat(max(0, sin(sim.lickPhase)))
+            if k > 0.05 {
+                g.fill(ellipse(CGPoint(x: 152, y: 140 + 2 * k), 5, 3 + 3 * k), .color(RGB(0xF28C9C)))
+            }
+        }
+
         // Bigodes: tremem de leve quando ronrona no carinho
         let purr = CGFloat(sin(sim.time.truncatingRemainder(dividingBy: 1000) * 38)) * 0.9 * pet
         let whiskers = Path2D { p in
@@ -390,14 +457,15 @@ public enum CatRenderer {
             g.stroke(closed, .color(c.eyeLine), StrokeStyle2(2.4, cap: .round))
             return
         }
-        let r = Geo.eyeRadius + sim.dream.value
+        let r = Geo.eyeRadius + sim.dream.value + 1.6 * sim.owl.value
         let circle = ellipse(p, r * 2, r * 2)
         g.fill(circle, .color(c.eye))
         g.save()
         g.clip(circle)
         let round = sim.pupilRound.value
-        let pw = lerp(4.5, 11.5, round) + sim.dream.value * 1.5
-        let ph = lerp(19, 14, round) + sim.dream.value * 1.5
+        let wide = 1 + 0.35 * sim.owl.value + 0.2 * sim.crouch.value
+        let pw = (lerp(4.5, 11.5, round) + sim.dream.value * 1.5) * wide
+        let ph = (lerp(19, 14, round) + sim.dream.value * 1.5) * wide
         let pc = p + sim.pupil.value * (r / Geo.eyeRadius)
         g.fill(ellipse(pc, pw, ph), .color(RGB(0x161616)))
         g.fill(ellipse(pc + CGPoint(x: -3.5, y: -4.5), 5.4, 5.4), .color(RGB(0xFFFFFF)))

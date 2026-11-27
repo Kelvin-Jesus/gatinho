@@ -1,4 +1,8 @@
+#if GATINHO_WEB
+import WASILibc
+#else
 import Foundation
+#endif
 
 /// Transformação afim 2D: x' = a·x + c·y + tx, y' = b·x + d·y + ty.
 struct Affine {
@@ -81,6 +85,21 @@ public final class SoftCanvas {
             out[s + 3] = UInt8(min(255, a * 255 + 0.5))
         }
         return out
+    }
+
+    /// RGBA 8 bits não pré-multiplicado num buffer já alocado (o canvas do site, sem alocar por quadro).
+    public func writeRGBAStraight(into out: UnsafeMutablePointer<UInt8>) {
+        px.withUnsafeBufferPointer { src in
+            for i in 0..<(width * height) {
+                let s = i * 4
+                let a = src[s + 3]
+                guard a > 0.0001 else { out[s] = 0; out[s + 1] = 0; out[s + 2] = 0; out[s + 3] = 0; continue }
+                out[s] = UInt8(min(255, src[s] / a * 255 + 0.5))
+                out[s + 1] = UInt8(min(255, src[s + 1] / a * 255 + 0.5))
+                out[s + 2] = UInt8(min(255, src[s + 2] / a * 255 + 0.5))
+                out[s + 3] = UInt8(min(255, a * 255 + 0.5))
+            }
+        }
     }
 
     /// Opacidade (0...1) de um pixel — usada para recortar a área clicável da janela.
